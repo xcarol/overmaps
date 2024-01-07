@@ -22,7 +22,7 @@ class _MyAppState extends State {
         useMaterial3: true,
         brightness: Brightness.dark,
       ),
-      title: 'Material 3',
+      title: 'Overmap',
       home: const Home(),
     );
   }
