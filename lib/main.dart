@@ -23,7 +23,7 @@ class _MyAppState extends State {
         brightness: Brightness.dark,
       ),
       title: 'Overmap',
-      home: const Home(),
+      home: Home(),
     );
   }
 }
