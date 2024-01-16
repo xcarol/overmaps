@@ -31,13 +31,7 @@ class _HomeState extends State<Home> {
         opacity: _opacity,
         onMapCreated: (GoogleMapController controller) {},
         onCameraMove: (CameraPosition position) {
-          _backController?.getZoomLevel().then((value) => {
-                if (value != position.zoom)
-                  {
-                    _backController
-                        ?.moveCamera(CameraUpdate.zoomTo(position.zoom))
-                  }
-              });
+          MapLayer.zoom(_backController, position);
         });
     final List<Widget> stackedMaps = <Widget>[backMap, frontMap];
 
