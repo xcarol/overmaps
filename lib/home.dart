@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:overmap/map.dart';
 
 class Home extends StatefulWidget {
@@ -10,13 +11,34 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   late double _opacity = 0.5;
+  late GoogleMapController? _backController;
 
   @override
   Widget build(BuildContext context) {
-    MapLayer frontMap =
-        MapLayer(latitude: 41.4471787, longitude: 2.1920866, opacity: _opacity);
-    MapLayer backMap =
-        const MapLayer(latitude: -33.86, longitude: 151.20, opacity: 1.0);
+    MapLayer backMap = MapLayer(
+        latitude: -33.86,
+        longitude: 151.20,
+        opacity: 1.0,
+        onMapCreated: (GoogleMapController controller) {
+          setState(() {
+            _backController = controller;
+          });
+        },
+        onCameraMove: (CameraPosition position) {});
+    MapLayer frontMap = MapLayer(
+        latitude: 41.4471787,
+        longitude: 2.1920866,
+        opacity: _opacity,
+        onMapCreated: (GoogleMapController controller) {},
+        onCameraMove: (CameraPosition position) {
+          _backController?.getZoomLevel().then((value) => {
+                if (value != position.zoom)
+                  {
+                    _backController
+                        ?.moveCamera(CameraUpdate.zoomTo(position.zoom))
+                  }
+              });
+        });
     final List<Widget> stackedMaps = <Widget>[backMap, frontMap];
 
     return Scaffold(

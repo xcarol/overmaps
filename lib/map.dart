@@ -6,22 +6,30 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 class MapLayer extends StatefulWidget {
   final double longitude, latitude;
   final double opacity;
+  final Function onCameraMove, onMapCreated;
 
   const MapLayer(
       {super.key,
       required this.latitude,
       required this.longitude,
-      required this.opacity});
+      required this.opacity,
+      required this.onMapCreated,
+      required this.onCameraMove});
 
   @override
   State createState() => _MapLayerState();
 }
 
 class _MapLayerState extends State<MapLayer> {
-  late GoogleMapController mapController;
+  late GoogleMapController _mapController;
 
   void _onMapCreated(GoogleMapController controller) {
-    mapController = controller;
+    _mapController = controller;
+    widget.onMapCreated(_mapController);
+  }
+
+  void _onCameraMove(CameraPosition position) {
+    widget.onCameraMove(position);
   }
 
   @override
@@ -34,9 +42,10 @@ class _MapLayerState extends State<MapLayer> {
     if (!kIsWeb && Platform.isAndroid) {
       childWidget = GoogleMap(
         onMapCreated: _onMapCreated,
+        onCameraMove: _onCameraMove,
+        zoomControlsEnabled: false,
         initialCameraPosition: CameraPosition(
           target: LatLng(widget.latitude, widget.longitude),
-          zoom: 11.0,
         ),
       );
     } else {
