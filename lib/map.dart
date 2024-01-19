@@ -7,19 +7,14 @@ class MapLayer extends StatefulWidget {
   final LatLng latLng;
   final Function onCameraMove, onMapCreated;
 
-  const MapLayer(
-      {super.key,
-      required this.latLng,
-      required this.onMapCreated,
-      required this.onCameraMove});
+  const MapLayer({super.key, required this.latLng, required this.onMapCreated, required this.onCameraMove});
 
   @override
   State createState() => _MapLayerState();
 
   static zoom(GoogleMapController? controller, CameraPosition position) {
     controller?.getZoomLevel().then((value) => {
-          if (value != position.zoom)
-            {controller.moveCamera(CameraUpdate.zoomTo(position.zoom))}
+          if (value != position.zoom) {controller.moveCamera(CameraUpdate.zoomTo(position.zoom))}
         });
   }
 }
@@ -38,6 +33,7 @@ class _MapLayerState extends State<MapLayer> {
 
   @override
   Widget build(BuildContext context) {
+    const zoom = 11.0;
     late Widget childWidget;
 
     // Check first if it's running on a Web Browser
@@ -50,6 +46,7 @@ class _MapLayerState extends State<MapLayer> {
         zoomControlsEnabled: false,
         initialCameraPosition: CameraPosition(
           target: widget.latLng,
+          zoom: zoom,
         ),
       );
     } else {
