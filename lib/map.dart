@@ -4,15 +4,12 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class MapLayer extends StatefulWidget {
-  final double longitude, latitude;
-  final double opacity;
+  final LatLng latLng;
   final Function onCameraMove, onMapCreated;
 
   const MapLayer(
       {super.key,
-      required this.latitude,
-      required this.longitude,
-      required this.opacity,
+      required this.latLng,
       required this.onMapCreated,
       required this.onCameraMove});
 
@@ -43,7 +40,7 @@ class _MapLayerState extends State<MapLayer> {
   Widget build(BuildContext context) {
     late Widget childWidget;
 
-    //Check first if it's running on a Web Browser
+    // Check first if it's running on a Web Browser
     // because dart:io Platform class doesn't implement
     // 'operatingSystem' attribute on this device type.
     if (!kIsWeb && Platform.isAndroid) {
@@ -52,7 +49,7 @@ class _MapLayerState extends State<MapLayer> {
         onCameraMove: _onCameraMove,
         zoomControlsEnabled: false,
         initialCameraPosition: CameraPosition(
-          target: LatLng(widget.latitude, widget.longitude),
+          target: widget.latLng,
         ),
       );
     } else {
@@ -60,14 +57,11 @@ class _MapLayerState extends State<MapLayer> {
           child: Column(children: [
         const Text('Android is the only platform currently supported.\n'),
         const Text('Coordinates\n'),
-        Text('Latitude: ${widget.latitude}'),
-        Text('Longitude: ${widget.longitude}'),
+        Text('Latitude: ${widget.latLng.latitude}'),
+        Text('Longitude: ${widget.latLng.longitude}'),
       ]));
     }
 
-    return Opacity(
-      opacity: widget.opacity,
-      child: childWidget,
-    );
+    return childWidget;
   }
 }

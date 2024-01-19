@@ -11,29 +11,44 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   late double _opacity = 0.5;
-  late GoogleMapController? _backController;
+  late GoogleMapController? _frontController, _backController;
+  late LatLng _backLatLng = const LatLng(-33.86, 151.20);
+  late LatLng _frontLatLng = const LatLng(41.4471787, 2.1920866);
 
   @override
   Widget build(BuildContext context) {
     MapLayer backMap = MapLayer(
-        latitude: -33.86,
-        longitude: 151.20,
-        opacity: 1.0,
+        latLng: _backLatLng,
         onMapCreated: (GoogleMapController controller) {
           setState(() {
             _backController = controller;
           });
         },
-        onCameraMove: (CameraPosition position) {});
-    MapLayer frontMap = MapLayer(
-        latitude: 41.4471787,
-        longitude: 2.1920866,
-        opacity: _opacity,
-        onMapCreated: (GoogleMapController controller) {},
         onCameraMove: (CameraPosition position) {
+          _backLatLng = position.target;
+        });
+    MapLayer frontMap = MapLayer(
+        latLng: _frontLatLng,
+        onMapCreated: (GoogleMapController controller) {
+          setState(() {
+            _frontController = controller;
+          });
+        },
+        onCameraMove: (CameraPosition position) {
+          _frontLatLng = position.target;
           MapLayer.zoom(_backController, position);
         });
-    final List<Widget> stackedMaps = <Widget>[backMap, frontMap];
+
+    final List<Widget> stackedMaps = <Widget>[
+      Opacity(
+        opacity: 1.0,
+        child: backMap,
+      ),
+      Opacity(
+        opacity: _opacity,
+        child: frontMap,
+      )
+    ];
 
     return Scaffold(
       appBar: AppBar(
@@ -43,10 +58,31 @@ class _HomeState extends State<Home> {
       persistentFooterButtons: [
         Slider(
             value: _opacity,
+            thumbColor: Theme.of(context).colorScheme.secondary,
+            activeColor: const Color.fromARGB(0, 0, 0, 0),
+            inactiveColor: const Color.fromARGB(0, 0, 0, 0),
             max: 1.0,
-            onChanged: (double value) {
+            onChanged: (double opacity) {
               setState(() {
-                _opacity = value;
+                if (opacity > 0.5 && _opacity <= 0.5) {
+                  LatLng z = _frontLatLng;
+                  _frontLatLng = _backLatLng;
+                  _backLatLng = z;
+                  _frontController
+                      ?.moveCamera(CameraUpdate.newLatLng(_frontLatLng));
+                  _backController
+                      ?.moveCamera(CameraUpdate.newLatLng(_backLatLng));
+                }
+                if (opacity <= 0.5 && _opacity > 0.5) {
+                  LatLng z = _frontLatLng;
+                  _frontLatLng = _backLatLng;
+                  _backLatLng = z;
+                  _frontController
+                      ?.moveCamera(CameraUpdate.newLatLng(_frontLatLng));
+                  _backController
+                      ?.moveCamera(CameraUpdate.newLatLng(_backLatLng));
+                }
+                _opacity = opacity;
               });
             })
       ],
