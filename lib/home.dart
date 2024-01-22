@@ -12,8 +12,8 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   late double _opacity = 0.5;
   late GoogleMapController? _frontController, _backController;
-  late LatLng _backLatLng = const LatLng(-33.86, 151.20);
-  late LatLng _frontLatLng = const LatLng(41.4471787, 2.1920866);
+  late CameraPosition _frontCameraPosition = const CameraPosition(target: LatLng(41.4471787, 2.1920866));
+  late CameraPosition _backCameraPosition = const CameraPosition(target: LatLng(-33.86, 151.20));
 
   backMapCreated() {
     return (GoogleMapController controller) {
@@ -25,7 +25,7 @@ class _HomeState extends State<Home> {
 
   backCameraMove() {
     return (CameraPosition position) {
-      _backLatLng = position.target;
+      _backCameraPosition = position;
     };
   }
 
@@ -39,18 +39,18 @@ class _HomeState extends State<Home> {
 
   frontCameraMove() {
     return (CameraPosition position) {
-      _frontLatLng = position.target;
+      _frontCameraPosition = position;
       MapLayer.zoom(_backController, position);
     };
   }
 
   switchMaps() {
-    LatLng copyFrontLatLng = _frontLatLng;
-    _frontLatLng = _backLatLng;
-    _backLatLng = copyFrontLatLng;
+    CameraPosition copyCameraPosition = _frontCameraPosition;
+    _frontCameraPosition = _backCameraPosition;
+    _backCameraPosition = copyCameraPosition;
 
-    _frontController?.moveCamera(CameraUpdate.newLatLng(_frontLatLng));
-    _backController?.moveCamera(CameraUpdate.newLatLng(_backLatLng));
+    _frontController?.moveCamera(CameraUpdate.newCameraPosition(_frontCameraPosition));
+    _backController?.moveCamera(CameraUpdate.newCameraPosition(_backCameraPosition));
   }
 
   sliderMoved(double opacity) {
@@ -70,9 +70,9 @@ class _HomeState extends State<Home> {
     const inactiveColor = Color.fromARGB(0, 0, 0, 0);
 
     final MapLayer backMap =
-        MapLayer(latLng: _backLatLng, onMapCreated: backMapCreated(), onCameraMove: backCameraMove());
+        MapLayer(latLng: _backCameraPosition.target, onMapCreated: backMapCreated(), onCameraMove: backCameraMove());
     final MapLayer frontMap =
-        MapLayer(latLng: _frontLatLng, onMapCreated: frontMapCreated(), onCameraMove: frontCameraMove());
+        MapLayer(latLng: _frontCameraPosition.target, onMapCreated: frontMapCreated(), onCameraMove: frontCameraMove());
 
     final List<Widget> stackedMaps = <Widget>[
       Opacity(opacity: 1.0, child: backMap),
