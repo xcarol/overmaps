@@ -14,7 +14,38 @@ class _HomeState extends State<Home> {
   late GoogleMapController? _frontController, _backController;
   late CameraPosition _frontCameraPosition = const CameraPosition(target: LatLng(41.4471787, 2.1920866));
   late CameraPosition _backCameraPosition = const CameraPosition(target: LatLng(-33.86, 151.20));
-  final String _backTitle = "Sydney", _frontTitle = "Barcelona";
+  final String _backName = "Sydney", _frontName = "Barcelona";
+
+  get mapNames => Row(children: [
+        Expanded(
+          child: Column(
+            children: [
+              Align(
+                alignment: _opacity >= 0.5 ? Alignment.topRight : Alignment.topLeft,
+                child: Text(_opacity >= 0.5 ? _frontName : _backName),
+              ),
+              Align(
+                alignment: _opacity >= 0.5 ? Alignment.bottomLeft : Alignment.bottomRight,
+                child: Text(_opacity >= 0.5 ? _backName : _frontName),
+              ),
+            ],
+          ),
+        ),
+      ]);
+
+  get slider => Slider(
+      value: _opacity,
+      thumbColor: Theme.of(context).colorScheme.secondary,
+      activeColor: const Color.fromARGB(0, 0, 0, 0),
+      inactiveColor: const Color.fromARGB(0, 0, 0, 0),
+      max: 1.0,
+      onChanged: sliderMoved);
+
+  get backMap =>
+      MapLayer(latLng: _backCameraPosition.target, onMapCreated: backMapCreated(), onCameraMove: backCameraMove());
+
+  get frontMap =>
+      MapLayer(latLng: _frontCameraPosition.target, onMapCreated: frontMapCreated(), onCameraMove: frontCameraMove());
 
   backMapCreated() {
     return (GoogleMapController controller) {
@@ -45,6 +76,11 @@ class _HomeState extends State<Home> {
     };
   }
 
+  stackedMaps(frontMap, backMap) => [
+        Opacity(opacity: 1.0, child: backMap),
+        Opacity(opacity: (_opacity > 0.5 ? _opacity : 1.0 - _opacity), child: frontMap)
+      ];
+
   switchMaps() {
     CameraPosition copyCameraPosition = _frontCameraPosition;
     _frontCameraPosition = _backCameraPosition;
@@ -65,53 +101,14 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    const opaque = 1.0;
-    final thumbColor = Theme.of(context).colorScheme.secondary;
-    const activeColor = Color.fromARGB(0, 0, 0, 0);
-    const inactiveColor = Color.fromARGB(0, 0, 0, 0);
-
-    final MapLayer backMap =
-        MapLayer(latLng: _backCameraPosition.target, onMapCreated: backMapCreated(), onCameraMove: backCameraMove());
-    final MapLayer frontMap =
-        MapLayer(latLng: _frontCameraPosition.target, onMapCreated: frontMapCreated(), onCameraMove: frontCameraMove());
-
-    final List<Widget> stackedMaps = <Widget>[
-      Opacity(opacity: 1.0, child: backMap),
-      Opacity(opacity: (_opacity > 0.5 ? _opacity : 1.0 - _opacity), child: frontMap)
-    ];
-
     return Scaffold(
         appBar: AppBar(
           title: const Text('Overmap'),
         ),
-        body: Stack(children: stackedMaps),
+        body: Stack(children: stackedMaps(frontMap, backMap)),
         persistentFooterButtons: [
           Column(
-            children: [
-              Slider(
-                  value: _opacity,
-                  thumbColor: thumbColor,
-                  activeColor: activeColor,
-                  inactiveColor: inactiveColor,
-                  max: opaque,
-                  onChanged: sliderMoved),
-              Row(children: [
-                Expanded(
-                  child: Column(
-                    children: [
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: Text(_frontTitle),
-                      ),
-                      Align(
-                        alignment: Alignment.bottomRight,
-                        child: Text(_backTitle),
-                      ),
-                    ],
-                  ),
-                ),
-              ]),
-            ],
+            children: [slider, mapNames],
           )
         ]);
   }
