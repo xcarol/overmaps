@@ -14,6 +14,7 @@ class _HomeState extends State<Home> {
   late GoogleMapController? _frontController, _backController;
   late CameraPosition _frontCameraPosition = const CameraPosition(target: LatLng(41.4471787, 2.1920866));
   late CameraPosition _backCameraPosition = const CameraPosition(target: LatLng(-33.86, 151.20));
+  final String _backTitle = "Sydney", _frontTitle = "Barcelona";
 
   backMapCreated() {
     return (GoogleMapController controller) {
@@ -49,8 +50,8 @@ class _HomeState extends State<Home> {
     _frontCameraPosition = _backCameraPosition;
     _backCameraPosition = copyCameraPosition;
 
-    _frontController?.moveCamera(CameraUpdate.newCameraPosition(_frontCameraPosition));
-    _backController?.moveCamera(CameraUpdate.newCameraPosition(_backCameraPosition));
+    MapLayer.setCameraPosition(_frontController, _frontCameraPosition);
+    MapLayer.setCameraPosition(_backController, _backCameraPosition);
   }
 
   sliderMoved(double opacity) {
@@ -80,19 +81,38 @@ class _HomeState extends State<Home> {
     ];
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Overmap'),
-      ),
-      body: Stack(children: stackedMaps),
-      persistentFooterButtons: [
-        Slider(
-            value: _opacity,
-            thumbColor: thumbColor,
-            activeColor: activeColor,
-            inactiveColor: inactiveColor,
-            max: opaque,
-            onChanged: sliderMoved)
-      ],
-    );
+        appBar: AppBar(
+          title: const Text('Overmap'),
+        ),
+        body: Stack(children: stackedMaps),
+        persistentFooterButtons: [
+          Column(
+            children: [
+              Slider(
+                  value: _opacity,
+                  thumbColor: thumbColor,
+                  activeColor: activeColor,
+                  inactiveColor: inactiveColor,
+                  max: opaque,
+                  onChanged: sliderMoved),
+              Row(children: [
+                Expanded(
+                  child: Column(
+                    children: [
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Text(_frontTitle),
+                      ),
+                      Align(
+                        alignment: Alignment.bottomRight,
+                        child: Text(_backTitle),
+                      ),
+                    ],
+                  ),
+                ),
+              ]),
+            ],
+          )
+        ]);
   }
 }

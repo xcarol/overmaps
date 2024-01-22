@@ -17,6 +17,10 @@ class MapLayer extends StatefulWidget {
           if (value != position.zoom) {controller.moveCamera(CameraUpdate.zoomTo(position.zoom))}
         });
   }
+
+  static setCameraPosition(GoogleMapController? controller, CameraPosition position) {
+    controller?.moveCamera(CameraUpdate.newCameraPosition(position));
+  }
 }
 
 class _MapLayerState extends State<MapLayer> {
