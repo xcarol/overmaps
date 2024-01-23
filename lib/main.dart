@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:overmap/home.dart';
+import 'package:overmap/map_model.dart';
+import 'package:provider/provider.dart';
 
-void main() => runApp(const MyApp());
+void main() => runApp(ChangeNotifierProvider(create: (context) => MapModel(), child: const MyApp()));
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});

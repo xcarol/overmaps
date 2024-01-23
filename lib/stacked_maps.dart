@@ -1,52 +1,36 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:overmap/map.dart';
+import 'package:overmap/map_model.dart';
+import 'package:provider/provider.dart';
 
 class StackedMaps extends StatefulWidget {
   final double frontMapLatitude;
   final double frontMapLongitude;
   final double backMapLatitude;
   final double backMapLongitude;
-  final double opacity;
 
-  final Completer<GoogleMapController> _frontController = Completer<GoogleMapController>();
-  final Completer<GoogleMapController> _backController = Completer<GoogleMapController>();
-
-  static double _opacity = 0.5;
-
-  StackedMaps(
+  const StackedMaps(
       {super.key,
       required this.frontMapLatitude,
       required this.frontMapLongitude,
       required this.backMapLatitude,
-      required this.backMapLongitude,
-      required this.opacity}) {
-    // if ((opacity > 0.5 && _opacity <= 0.5) || (opacity <= 0.5 && _opacity > 0.5)) {
-    //   switchMaps();
-    // }
-    StackedMaps._opacity = opacity;
-  }
-
-  // switchMaps() {
-  //   CameraPosition copyCameraPosition = _frontCameraPosition;
-  //   _frontCameraPosition = _backCameraPosition;
-  //   _backCameraPosition = copyCameraPosition;
-
-  //   MapLayer.setCameraPosition(widget._frontController, _frontCameraPosition);
-  //   MapLayer.setCameraPosition(widget._backController, _backCameraPosition);
-  // }
+      required this.backMapLongitude});
 
   @override
   State createState() => _StackedMapsState();
 }
 
 class _StackedMapsState extends State<StackedMaps> {
+  late double _opacity = 0.0;
+
+  late GoogleMapController _frontController;
+  late GoogleMapController _backController;
+
   late CameraPosition _frontCameraPosition =
-      CameraPosition(target: LatLng(widget.frontMapLatitude, widget.frontMapLatitude));
+      CameraPosition(target: LatLng(widget.frontMapLatitude, widget.frontMapLongitude));
   late CameraPosition _backCameraPosition =
-      CameraPosition(target: LatLng(widget.backMapLatitude, widget.backMapLatitude));
+      CameraPosition(target: LatLng(widget.backMapLatitude, widget.backMapLongitude));
 
   get backMap =>
       MapLayer(latLng: _backCameraPosition.target, onMapCreated: backMapCreated(), onCameraMove: backCameraMove());
@@ -57,7 +41,7 @@ class _StackedMapsState extends State<StackedMaps> {
   backMapCreated() {
     return (GoogleMapController controller) {
       setState(() {
-        widget._backController.complete(controller);
+        _backController = controller;
       });
     };
   }
@@ -71,7 +55,7 @@ class _StackedMapsState extends State<StackedMaps> {
   frontMapCreated() {
     return (GoogleMapController controller) {
       setState(() {
-        widget._frontController.complete(controller);
+        _frontController = controller;
       });
     };
   }
@@ -79,7 +63,7 @@ class _StackedMapsState extends State<StackedMaps> {
   frontCameraMove() {
     return (CameraPosition position) {
       _frontCameraPosition = position;
-      widget._backController.future.then((controller) => MapLayer.zoom(controller, position));
+      MapLayer.zoom(_backController, position);
     };
   }
 
@@ -88,17 +72,23 @@ class _StackedMapsState extends State<StackedMaps> {
     _frontCameraPosition = _backCameraPosition;
     _backCameraPosition = copyCameraPosition;
 
-    widget._frontController.future.then((controller) => MapLayer.setCameraPosition(controller, _frontCameraPosition));
-    widget._backController.future.then((controller) => MapLayer.setCameraPosition(controller, _backCameraPosition));
+    MapLayer.setCameraPosition(_frontController, _frontCameraPosition);
+    MapLayer.setCameraPosition(_backController, _backCameraPosition);
   }
 
   stackedMaps(frontMap, backMap) => [
         Opacity(opacity: 1.0, child: backMap),
-        Opacity(opacity: (widget.opacity > 0.5 ? widget.opacity : 1.0 - widget.opacity), child: frontMap)
+        Opacity(opacity: (_opacity > 0.5 ? _opacity : 1.0 - _opacity), child: frontMap)
       ];
 
   @override
   Widget build(BuildContext context) {
-    return Stack(children: stackedMaps(frontMap, backMap));
+    return Consumer<MapModel>(builder: (context, map, child) {
+      if ((_opacity > 0.5 && map.opacity <= 0.5) || (_opacity <= 0.5 && map.opacity > 0.5)) {
+        switchMaps();
+      }
+      _opacity = map.opacity;
+      return Stack(children: stackedMaps(frontMap, backMap));
+    });
   }
 }
