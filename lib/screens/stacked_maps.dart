@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:overmap/map.dart';
-import 'package:overmap/map_model.dart';
+import 'package:overmap/widgets/map.dart';
+import 'package:overmap/models/map_model.dart';
 import 'package:provider/provider.dart';
 
 class StackedMaps extends StatefulWidget {
