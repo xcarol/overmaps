@@ -24,8 +24,8 @@ class StackedMaps extends StatefulWidget {
 class _StackedMapsState extends State<StackedMaps> {
   late double _opacity = 0.0;
 
-  late GoogleMapController _frontController;
-  late GoogleMapController _backController;
+  GoogleMapController? _frontController;
+  GoogleMapController? _backController;
 
   late CameraPosition _frontCameraPosition =
       CameraPosition(target: LatLng(widget.frontMapLatitude, widget.frontMapLongitude));
