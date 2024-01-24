@@ -1,5 +1,10 @@
+import 'dart:developer';
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
+import 'package:google_places_flutter/model/prediction.dart';
 import 'package:overmap/models/map_model.dart';
+import 'package:overmap/screens/search.dart';
 import 'package:overmap/screens/stacked_maps.dart';
 import 'package:provider/provider.dart';
 
@@ -11,37 +16,66 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  late double _opacity = 0.5;
-  final double _barcelonaLatitude = -33.86, _barcelonaLongitude = 151.20;
-  final double _sydneyLatitude = 41.4471787, _sydneyLongitude = 2.1920866;
-  final String _sydneyName = "Sydney", _barcelonaName = "Barcelona";
+  late double _opacity = 0.4;
+  late double _rightLatitude = -33.86, _rightLongitude = 151.20;
+  late double _leftLatitude = 41.4471787, _leftLongitude = 2.1920866;
+  late String _leftName = "left", _rightName = "right";
 
-  get mapNames => Row(children: [
-        IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
+  get mapNamesRow => Row(children: [
+        IconButton(onPressed: searchLeftPlace, icon: const Icon(Icons.search)),
         Expanded(
           child: Column(
             children: [
               Align(
                 alignment: _opacity >= 0.5 ? Alignment.topRight : Alignment.topLeft,
-                child: Text(_opacity >= 0.5 ? _sydneyName : _barcelonaName),
+                child: Text(_opacity >= 0.5 ? _leftName : _rightName),
               ),
               Align(
                 alignment: _opacity >= 0.5 ? Alignment.bottomLeft : Alignment.bottomRight,
-                child: Text(_opacity >= 0.5 ? _barcelonaName : _sydneyName),
+                child: Text(_opacity >= 0.5 ? _rightName : _leftName),
               ),
             ],
           ),
         ),
-        IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
+        IconButton(onPressed: searchRightPlace, icon: const Icon(Icons.search)),
       ]);
 
-  get slider => Slider(
+  get sliderRow => Slider(
       value: _opacity,
       thumbColor: Theme.of(context).colorScheme.secondary,
       activeColor: const Color.fromARGB(0, 0, 0, 0),
       inactiveColor: const Color.fromARGB(0, 0, 0, 0),
       max: 1.0,
       onChanged: sliderMoved);
+
+  searchPlace(Function selectedPlace) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => SearchPlace(selectedPlace: selectedPlace)),
+    );
+  }
+
+  searchLeftPlace() {
+    searchPlace((Prediction place) {
+      setState(() {
+        _leftLatitude = double.parse(place.lat ?? "41.4471787");
+        _leftLongitude = double.parse(place.lng ?? "2.1920866");
+        _leftName = place.structuredFormatting?.mainText ?? "Barcelona";
+      });
+      Navigator.pop(context);
+    });
+  }
+
+  searchRightPlace() {
+    searchPlace((Prediction place) {
+      setState(() {
+        _rightLatitude = double.parse(place.lat ?? "-33.86");
+        _rightLongitude = double.parse(place.lng ?? "151.20");
+        _rightName = place.structuredFormatting?.mainText ?? "Sydney";
+      });
+      Navigator.pop(context);
+    });
+  }
 
   sliderMoved(double opacity) {
     setState(() {
@@ -57,13 +91,13 @@ class _HomeState extends State<Home> {
           title: const Text('Overmap'),
         ),
         body: StackedMaps(
-            frontMapLatitude: _sydneyLatitude,
-            frontMapLongitude: _sydneyLongitude,
-            backMapLatitude: _barcelonaLatitude,
-            backMapLongitude: _barcelonaLongitude),
+            frontMapLatitude: _leftLatitude,
+            frontMapLongitude: _leftLongitude,
+            backMapLatitude: _rightLatitude,
+            backMapLongitude: _rightLongitude),
         persistentFooterButtons: [
           Column(
-            children: [slider, mapNames],
+            children: [sliderRow, mapNamesRow],
           )
         ]);
   }
