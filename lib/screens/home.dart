@@ -1,6 +1,3 @@
-import 'dart:developer';
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:google_places_flutter/model/prediction.dart';
 import 'package:overmap/models/map_model.dart';
@@ -28,11 +25,11 @@ class _HomeState extends State<Home> {
             children: [
               Align(
                 alignment: _opacity >= 0.5 ? Alignment.topRight : Alignment.topLeft,
-                child: Text(_opacity >= 0.5 ? _leftName : _rightName),
+                child: Text(_opacity >= 0.5 ? _rightName : _leftName),
               ),
               Align(
                 alignment: _opacity >= 0.5 ? Alignment.bottomLeft : Alignment.bottomRight,
-                child: Text(_opacity >= 0.5 ? _rightName : _leftName),
+                child: Text(_opacity >= 0.5 ? _leftName : _rightName),
               ),
             ],
           ),
