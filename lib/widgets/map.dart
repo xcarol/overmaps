@@ -40,10 +40,16 @@ class _MapLayerState extends State<MapLayer> {
     const zoom = 11.0;
     late Widget childWidget;
 
-    // Check first if it's running on a Web Browser
-    // because dart:io Platform class doesn't implement
-    // 'operatingSystem' attribute on this device type.
-    if (!kIsWeb && Platform.isAndroid) {
+    // Check first if it's running on a Web Browser because dart:io Platform class is not implemented in this case.
+    if (kIsWeb || Platform.isAndroid == false) {
+      childWidget = Center(
+          child: Column(children: [
+        const Text('Android is the only platform currently supported.\n'),
+        const Text('Coordinates\n'),
+        Text('Latitude: ${widget.latLng.latitude}'),
+        Text('Longitude: ${widget.latLng.longitude}'),
+      ]));
+    } else {
       childWidget = GoogleMap(
         onMapCreated: _onMapCreated,
         onCameraMove: _onCameraMove,
@@ -53,14 +59,6 @@ class _MapLayerState extends State<MapLayer> {
           zoom: zoom,
         ),
       );
-    } else {
-      childWidget = Center(
-          child: Column(children: [
-        const Text('Android is the only platform currently supported.\n'),
-        const Text('Coordinates\n'),
-        Text('Latitude: ${widget.latLng.latitude}'),
-        Text('Longitude: ${widget.latLng.longitude}'),
-      ]));
     }
 
     return childWidget;
