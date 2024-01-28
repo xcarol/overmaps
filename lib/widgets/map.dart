@@ -2,19 +2,20 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:overmap/models/stacked_maps_model.dart';
 
-class MapLayer extends StatefulWidget {
+class Map extends StatefulWidget {
   final LatLng latLng;
   final Function onCameraMove, onMapCreated;
 
-  const MapLayer({super.key, required this.latLng, required this.onMapCreated, required this.onCameraMove});
+  const Map({super.key, required this.latLng, required this.onMapCreated, required this.onCameraMove});
 
   @override
-  State createState() => _MapLayerState();
+  State createState() => _MapState();
 
   static zoom(GoogleMapController? controller, CameraPosition position) {
-    controller?.getZoomLevel().then((value) => {
-          if (value != position.zoom) {controller.moveCamera(CameraUpdate.zoomTo(position.zoom))}
+    controller?.getZoomLevel().then((zoom) => {
+          if (zoom != position.zoom) {controller.moveCamera(CameraUpdate.zoomTo(position.zoom))}
         });
   }
 
@@ -23,8 +24,25 @@ class MapLayer extends StatefulWidget {
   }
 }
 
-class _MapLayerState extends State<MapLayer> {
+class _MapState extends State<Map> {
   late GoogleMapController _mapController;
+
+  Widget get unsupportedPlatformWidget => Center(
+          child: Column(children: [
+        const Text('Android is the only platform currently supported.\n'),
+        const Text('Coordinates\n'),
+        Text('Latitude: ${widget.latLng.latitude}'),
+        Text('Longitude: ${widget.latLng.longitude}'),
+      ]));
+
+  Widget get mapWidget => GoogleMap(
+      onMapCreated: _onMapCreated,
+      onCameraMove: _onCameraMove,
+      zoomControlsEnabled: false,
+      initialCameraPosition: CameraPosition(
+        target: widget.latLng,
+        zoom: StackedMapsModel.defaultZoom,
+      ));
 
   void _onMapCreated(GoogleMapController controller) {
     _mapController = controller;
@@ -37,28 +55,13 @@ class _MapLayerState extends State<MapLayer> {
 
   @override
   Widget build(BuildContext context) {
-    const zoom = 11.0;
     late Widget childWidget;
 
     // Check first if it's running on a Web Browser because dart:io Platform class is not implemented in this case.
     if (kIsWeb || Platform.isAndroid == false) {
-      childWidget = Center(
-          child: Column(children: [
-        const Text('Android is the only platform currently supported.\n'),
-        const Text('Coordinates\n'),
-        Text('Latitude: ${widget.latLng.latitude}'),
-        Text('Longitude: ${widget.latLng.longitude}'),
-      ]));
+      childWidget = unsupportedPlatformWidget;
     } else {
-      childWidget = GoogleMap(
-        onMapCreated: _onMapCreated,
-        onCameraMove: _onCameraMove,
-        zoomControlsEnabled: false,
-        initialCameraPosition: CameraPosition(
-          target: widget.latLng,
-          zoom: zoom,
-        ),
-      );
+      childWidget = mapWidget;
     }
 
     return childWidget;

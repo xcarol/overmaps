@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_places_flutter/model/prediction.dart';
-import 'package:overmap/models/map_model.dart';
+import 'package:overmap/models/stacked_maps_model.dart';
 import 'package:overmap/screens/search.dart';
 import 'package:overmap/screens/stacked_maps.dart';
 import 'package:provider/provider.dart';
@@ -13,24 +14,25 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  late double _opacity = 0.4;
-  late double _rightLatitude = -33.86, _rightLongitude = 151.20;
-  late double _leftLatitude = 41.4471787, _leftLongitude = 2.1920866;
-  late String _leftName = "left", _rightName = "right";
+  late double _opacity = StackedMapsModel.halfOpacity - 0.1;
+  late String _rightName = StackedMapsModel.sydneyName;
+  late String _leftName = StackedMapsModel.barcelonaName;
+
+  get isLeftPlaceInFront => _opacity < StackedMapsModel.halfOpacity;
+  get isRightPlaceInFront => _opacity >= StackedMapsModel.halfOpacity;
+
+  get rightAlignment => isRightPlaceInFront ? Alignment.topRight : Alignment.topLeft;
+  get leftAlignment => isRightPlaceInFront ? Alignment.bottomLeft : Alignment.bottomRight;
+  get rightNameText => Text(isRightPlaceInFront ? _rightName : _leftName);
+  get leftNameText => Text(isRightPlaceInFront ? _leftName : _rightName);
 
   get mapNamesRow => Row(children: [
         IconButton(onPressed: searchLeftPlace, icon: const Icon(Icons.search)),
         Expanded(
           child: Column(
             children: [
-              Align(
-                alignment: _opacity >= 0.5 ? Alignment.topRight : Alignment.topLeft,
-                child: Text(_opacity >= 0.5 ? _rightName : _leftName),
-              ),
-              Align(
-                alignment: _opacity >= 0.5 ? Alignment.bottomLeft : Alignment.bottomRight,
-                child: Text(_opacity >= 0.5 ? _leftName : _rightName),
-              ),
+              Align(alignment: rightAlignment, child: rightNameText),
+              Align(alignment: leftAlignment, child: leftNameText),
             ],
           ),
         ),
@@ -45,6 +47,32 @@ class _HomeState extends State<Home> {
       max: 1.0,
       onChanged: sliderMoved);
 
+  void setBackPlace(Prediction place) {
+    LatLng currentLocation = Provider.of<StackedMapsModel>(context, listen: false).backPlaceLocation;
+    double latitude = double.parse(place.lat ?? currentLocation.latitude.toString());
+    double longitude = double.parse(place.lng ?? currentLocation.longitude.toString());
+
+    String currentName = Provider.of<StackedMapsModel>(context, listen: false).backPlaceName;
+    String name = place.structuredFormatting?.mainText ?? currentName;
+
+    Provider.of<StackedMapsModel>(context, listen: false).backPlaceLocation = LatLng(latitude, longitude);
+    Provider.of<StackedMapsModel>(context, listen: false).backPlaceName = name;
+    Provider.of<StackedMapsModel>(context, listen: false).updateBackMapLocation = true;
+  }
+
+  void setFrontPlace(Prediction place) {
+    LatLng currentLocation = Provider.of<StackedMapsModel>(context, listen: false).frontPlaceLocation;
+    double latitude = double.parse(place.lat ?? currentLocation.latitude.toString());
+    double longitude = double.parse(place.lng ?? currentLocation.longitude.toString());
+
+    String currentName = Provider.of<StackedMapsModel>(context, listen: false).frontPlaceName;
+    String name = place.structuredFormatting?.mainText ?? currentName;
+
+    Provider.of<StackedMapsModel>(context, listen: false).frontPlaceLocation = LatLng(latitude,longitude);
+    Provider.of<StackedMapsModel>(context, listen: false).frontPlaceName = name;
+    Provider.of<StackedMapsModel>(context, listen: false).updateFrontMapLocation = true;
+  }
+
   searchPlace(Function selectedPlace) {
     Navigator.push(
       context,
@@ -55,9 +83,15 @@ class _HomeState extends State<Home> {
   searchLeftPlace() {
     searchPlace((Prediction place) {
       setState(() {
-        _leftLatitude = double.parse(place.lat ?? "41.4471787");
-        _leftLongitude = double.parse(place.lng ?? "2.1920866");
-        _leftName = place.structuredFormatting?.mainText ?? "Barcelona";
+        if (isLeftPlaceInFront) {
+          setFrontPlace(place);
+          _leftName = place.structuredFormatting?.mainText ??
+              Provider.of<StackedMapsModel>(context, listen: false).frontPlaceName;
+        } else {
+          setBackPlace(place);
+          _leftName = place.structuredFormatting?.mainText ??
+              Provider.of<StackedMapsModel>(context, listen: false).backPlaceName;
+        }
       });
       Navigator.pop(context);
     });
@@ -66,9 +100,15 @@ class _HomeState extends State<Home> {
   searchRightPlace() {
     searchPlace((Prediction place) {
       setState(() {
-        _rightLatitude = double.parse(place.lat ?? "-33.86");
-        _rightLongitude = double.parse(place.lng ?? "151.20");
-        _rightName = place.structuredFormatting?.mainText ?? "Sydney";
+        if (isRightPlaceInFront) {
+          setFrontPlace(place);
+          _rightName = place.structuredFormatting?.mainText ??
+              Provider.of<StackedMapsModel>(context, listen: false).frontPlaceName;
+        } else {
+          setBackPlace(place);
+          _rightName = place.structuredFormatting?.mainText ??
+              Provider.of<StackedMapsModel>(context, listen: false).backPlaceName;
+        }
       });
       Navigator.pop(context);
     });
@@ -76,7 +116,7 @@ class _HomeState extends State<Home> {
 
   sliderMoved(double opacity) {
     setState(() {
-      Provider.of<MapModel>(context, listen: false).opacity = opacity;
+      Provider.of<StackedMapsModel>(context, listen: false).opacity = opacity;
       _opacity = opacity;
     });
   }
@@ -87,14 +127,10 @@ class _HomeState extends State<Home> {
         appBar: AppBar(
           title: const Text('Overmap'),
         ),
-        body: StackedMaps(
-            frontMapLatitude: _leftLatitude,
-            frontMapLongitude: _leftLongitude,
-            backMapLatitude: _rightLatitude,
-            backMapLongitude: _rightLongitude),
+        body: const StackedMaps(),
         persistentFooterButtons: [
           Column(
-            children: [sliderRow, mapNamesRow],
+            children: [mapNamesRow, sliderRow],
           )
         ]);
   }

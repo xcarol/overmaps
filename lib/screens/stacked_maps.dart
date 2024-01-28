@@ -1,21 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:overmap/widgets/map.dart';
-import 'package:overmap/models/map_model.dart';
+import 'package:overmap/models/stacked_maps_model.dart';
 import 'package:provider/provider.dart';
 
 class StackedMaps extends StatefulWidget {
-  final double frontMapLatitude;
-  final double frontMapLongitude;
-  final double backMapLatitude;
-  final double backMapLongitude;
-
-  const StackedMaps(
-      {super.key,
-      required this.frontMapLatitude,
-      required this.frontMapLongitude,
-      required this.backMapLatitude,
-      required this.backMapLongitude});
+  const StackedMaps({super.key});
 
   @override
   State createState() => _StackedMapsState();
@@ -27,16 +17,25 @@ class _StackedMapsState extends State<StackedMaps> {
   GoogleMapController? _frontController;
   GoogleMapController? _backController;
 
-  late CameraPosition _frontCameraPosition =
-      CameraPosition(target: LatLng(widget.frontMapLatitude, widget.frontMapLongitude));
-  late CameraPosition _backCameraPosition =
-      CameraPosition(target: LatLng(widget.backMapLatitude, widget.backMapLongitude));
+  late CameraPosition _frontCameraPosition = CameraPosition(target: StackedMapsModel.sydneyLocation);
+  late CameraPosition _backCameraPosition = CameraPosition(target: StackedMapsModel.barcelonaLocation);
 
   get backMap =>
-      MapLayer(latLng: _backCameraPosition.target, onMapCreated: backMapCreated(), onCameraMove: backCameraMove());
+      Map(latLng: _backCameraPosition.target, onMapCreated: backMapCreated(), onCameraMove: backCameraMove());
 
   get frontMap =>
-      MapLayer(latLng: _frontCameraPosition.target, onMapCreated: frontMapCreated(), onCameraMove: frontCameraMove());
+      Map(latLng: _frontCameraPosition.target, onMapCreated: frontMapCreated(), onCameraMove: frontCameraMove());
+
+  double get frontMapOpacity =>
+      (_opacity > StackedMapsModel.halfOpacity ? _opacity : StackedMapsModel.opaque - _opacity);
+
+  stackedMaps(frontMap, backMap) =>
+      [Opacity(opacity: StackedMapsModel.opaque, child: backMap), Opacity(opacity: frontMapOpacity, child: frontMap)];
+
+  bool needSwitchMaps(StackedMapsModel map) {
+    return (_opacity > StackedMapsModel.halfOpacity && map.opacity <= StackedMapsModel.halfOpacity) ||
+        (_opacity <= StackedMapsModel.halfOpacity && map.opacity > StackedMapsModel.halfOpacity);
+  }
 
   backMapCreated() {
     return (GoogleMapController controller) {
@@ -63,8 +62,17 @@ class _StackedMapsState extends State<StackedMaps> {
   frontCameraMove() {
     return (CameraPosition position) {
       _frontCameraPosition = position;
-      MapLayer.zoom(_backController, position);
+      Map.zoom(_backController, position);
     };
+  }
+
+  CameraPosition updateCameraLocation(GoogleMapController? controller, CameraPosition cameraPosition, LatLng location) {
+    return CameraPosition(
+        target: location, bearing: cameraPosition.bearing, tilt: cameraPosition.tilt, zoom: cameraPosition.zoom);
+  }
+
+  updateMap(GoogleMapController controller, CameraPosition position) {
+    Map.setCameraPosition(controller, position);
   }
 
   switchMaps() {
@@ -72,21 +80,29 @@ class _StackedMapsState extends State<StackedMaps> {
     _frontCameraPosition = _backCameraPosition;
     _backCameraPosition = copyCameraPosition;
 
-    MapLayer.setCameraPosition(_frontController, _frontCameraPosition);
-    MapLayer.setCameraPosition(_backController, _backCameraPosition);
+    Map.setCameraPosition(_frontController, _frontCameraPosition);
+    Map.setCameraPosition(_backController, _backCameraPosition);
   }
-
-  stackedMaps(frontMap, backMap) => [
-        Opacity(opacity: 1.0, child: backMap),
-        Opacity(opacity: (_opacity > 0.5 ? _opacity : 1.0 - _opacity), child: frontMap)
-      ];
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<MapModel>(builder: (context, map, child) {
-      if ((_opacity > 0.5 && map.opacity <= 0.5) || (_opacity <= 0.5 && map.opacity > 0.5)) {
+    return Consumer<StackedMapsModel>(builder: (context, map, child) {
+      if (needSwitchMaps(map)) {
         switchMaps();
       }
+
+      if (map.updateFrontMapLocation) {
+        _frontCameraPosition = updateCameraLocation(_frontController, _frontCameraPosition, map.frontPlaceLocation);
+        updateMap(_frontController!, _frontCameraPosition);
+        map.updateFrontMapLocation = false;
+      }
+
+      if (map.updateBackMapLocation) {
+        _backCameraPosition = updateCameraLocation(_backController, _backCameraPosition, map.backPlaceLocation);
+        updateMap(_backController!, _backCameraPosition);
+        map.updateBackMapLocation = false;
+      }
+
       _opacity = map.opacity;
       return Stack(children: stackedMaps(frontMap, backMap));
     });
