@@ -14,12 +14,12 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  late double _opacity = StackedMapsModel.halfOpacity - 0.1;
+  late double _opacity = StackedMapsModel.halfOpacity;
   late String _rightName = StackedMapsModel.sydneyName;
   late String _leftName = StackedMapsModel.barcelonaName;
 
-  get isLeftPlaceInFront => _opacity < StackedMapsModel.halfOpacity;
-  get isRightPlaceInFront => _opacity >= StackedMapsModel.halfOpacity;
+  get isLeftPlaceInFront => _opacity <= StackedMapsModel.halfOpacity;
+  get isRightPlaceInFront => _opacity > StackedMapsModel.halfOpacity;
 
   get rightAlignment => isRightPlaceInFront ? Alignment.topRight : Alignment.topLeft;
   get leftAlignment => isRightPlaceInFront ? Alignment.bottomLeft : Alignment.bottomRight;
