@@ -31,7 +31,7 @@ class SearchPlace extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: GooglePlaceAutoCompleteTextField(
         containerHorizontalPadding: 10,
-        googleAPIKey: "",
+        googleAPIKey: const String.fromEnvironment("MAPS_API_KEY"),
         isCrossBtnShown: true,
         seperatedBuilder: const Divider(),
         textEditingController: controller,
