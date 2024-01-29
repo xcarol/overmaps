@@ -1,16 +1,23 @@
-# overmap
+# Overmap
 
-A new Flutter project.
+Visually compare locations using Google Maps
 
-## Getting Started
+## Google Maps Key
 
-This project is a starting point for a Flutter application.
+Set _MAPS_API_KEY_ environment variable at _./android/secrets.properties_  for the android app  
+Set _--dart-define=MAPS_API_KEY=key_ when running _flutter_
 
-A few resources to get you started if this is your first Flutter project:
+### VSCODE
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Set in _.vscode/launch.json_
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+    "configurations": [
+        {
+          "name": "overmap",
+          "request": "launch",
+          "type": "dart",
+          "toolArgs": [
+            "--dart-define=MAPS_API_KEY=key"
+          ]
+        }
+      ]
