@@ -1,4 +1,4 @@
-package com.example.overmap
+package com.xicra.overmap
 
 import io.flutter.embedding.android.FlutterActivity
 
