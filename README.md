@@ -36,7 +36,8 @@ As this is a one time process, I cannot step back to do the process again, so he
 
 Links to follow:
 
-https://docs.flutter.dev/deployment/android
-https://developer.android.com/studio/publish/app-signing#enroll_new
+<https://docs.flutter.dev/deployment/android>
+<https://developer.android.com/studio/publish/app-signing#enroll_new>
+<https://play.google.com/console>
 
 The keystore (and password) used for the app signing is at the Bitwarden vault.
