@@ -30,3 +30,13 @@ The file used as the app logo is _./lib/assets/logo.png_
 
 After updating the logo run:  $ `dart run flutter_launcher_icons`
 
+## Application signing and publishing
+
+As this is a one time process, I cannot step back to do the process again, so here it is usseful information in case is needed do this process again. God bless we don't.
+
+Links to follow:
+
+https://docs.flutter.dev/deployment/android
+https://developer.android.com/studio/publish/app-signing#enroll_new
+
+The keystore (and password) used for the app signing is at the Bitwarden vault.
