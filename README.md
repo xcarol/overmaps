@@ -22,6 +22,8 @@ Set in _.vscode/launch.json_
         }
       ]
 
+- MAPS_API_KEY "key" is the same used in the _secrets.properties_.  
+
 ## Icons
 
 The [flutter_launcher_icons](https://pub.dev/packages/flutter_launcher_icons) tool is used to generate the icons for different platforms  
