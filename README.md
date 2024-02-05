@@ -28,7 +28,7 @@ Set in _.vscode/launch.json_
 
 The [flutter_launcher_icons](https://pub.dev/packages/flutter_launcher_icons) tool is used to generate the icons for different platforms  
 
-The file used as the app logo is _./lib/assets/logo.png_  
+The file used as the app logo is _./lib/assets/logo.png_  defined in the _pubspec.yaml_ file under the _flutter_launcher_icons_ section.  
 
 After updating the logo run:  $ `dart run flutter_launcher_icons`
 
