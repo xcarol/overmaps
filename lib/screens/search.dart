@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_places_flutter/google_places_flutter.dart';
-import 'package:google_places_flutter/model/prediction.dart';
 
 class SearchPlace extends StatelessWidget {
   final Function selectedPlace;
@@ -29,25 +27,7 @@ class SearchPlace extends StatelessWidget {
   placesAutoCompleteTextField() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: GooglePlaceAutoCompleteTextField(
-        containerHorizontalPadding: 10,
-        googleAPIKey: const String.fromEnvironment("MAPS_API_KEY"),
-        isCrossBtnShown: true,
-        seperatedBuilder: const Divider(),
-        textEditingController: controller,
-        inputDecoration: const InputDecoration(
-          hintText: "Search your location",
-          border: InputBorder.none,
-          enabledBorder: InputBorder.none,
-        ),
-        getPlaceDetailWithLatLng: (Prediction prediction) {
-          selectedPlace(prediction);
-        },
-        itemClick: (Prediction prediction) {
-          controller.text = prediction.description ?? "";
-          controller.selection = TextSelection.fromPosition(TextPosition(offset: prediction.description?.length ?? 0));
-        },
-      ),
+      child: const Column(),
     );
   }
 }
