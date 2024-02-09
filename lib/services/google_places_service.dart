@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:http/http.dart' as http;
 
 class GooglePlacesService {
@@ -12,13 +13,17 @@ class GooglePlacesService {
   GooglePlacesService({required this.mapsApiKey});
 
   Future<dynamic> searchPlaces(String search) async {
-    final response =
-        await http.get(Uri.parse(_searchUrl.replaceFirst('{SEARCH}', search).replaceFirst('{KEY}', mapsApiKey)));
+    try {
+      final response =
+          await http.get(Uri.parse(_searchUrl.replaceFirst('{SEARCH}', search).replaceFirst('{KEY}', mapsApiKey)));
 
-    if (response.statusCode == 200) {
-      return json.decode(response.body);
-    } else {
-      throw Exception('Error en la sol·licitud: ${response.statusCode}');
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        throw Exception('Error en la sol·licitud: ${response.statusCode}');
+      }
+    } catch (e) {
+      log('Error: $e \nIt might be due to CORS with Web Browser');
     }
   }
 
