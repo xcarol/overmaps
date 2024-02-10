@@ -7,6 +7,7 @@ class GooglePlacesService {
       'https://maps.googleapis.com/maps/api/place/autocomplete/json?input={SEARCH}&key={KEY}';
   static const String _placeUrl =
       'https://maps.googleapis.com/maps/api/place/details/json?placeid={PLACE_ID}&key={KEY}';
+  static const response = (status: 'status', result: 'result', ok: 'OK');
 
   final String mapsApiKey;
 
@@ -27,7 +28,7 @@ class GooglePlacesService {
     }
   }
 
-  Future<dynamic> getPlaceCoordinates(String placeId) async {
+  Future<dynamic> getPlaceDetails(String placeId) async {
     final response =
         await http.get(Uri.parse(_placeUrl.replaceFirst('{PLACE_ID}', placeId).replaceFirst('{KEY}', mapsApiKey)));
 
