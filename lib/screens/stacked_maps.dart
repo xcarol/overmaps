@@ -71,7 +71,7 @@ class _StackedMapsState extends State<StackedMaps> {
         target: location, bearing: cameraPosition.bearing, tilt: cameraPosition.tilt, zoom: cameraPosition.zoom);
   }
 
-  updateMap(GoogleMapController controller, CameraPosition position) {
+  updateMap(GoogleMapController ?controller, CameraPosition position) {
     Map.setCameraPosition(controller, position);
   }
 
@@ -93,13 +93,13 @@ class _StackedMapsState extends State<StackedMaps> {
 
       if (map.updateFrontMapLocation) {
         _frontCameraPosition = updateCameraLocation(_frontController, _frontCameraPosition, map.frontPlaceLocation);
-        updateMap(_frontController!, _frontCameraPosition);
+        updateMap(_frontController, _frontCameraPosition);
         map.updateFrontMapLocation = false;
       }
 
       if (map.updateBackMapLocation) {
         _backCameraPosition = updateCameraLocation(_backController, _backCameraPosition, map.backPlaceLocation);
-        updateMap(_backController!, _backCameraPosition);
+        updateMap(_backController, _backCameraPosition);
         map.updateBackMapLocation = false;
       }
 
