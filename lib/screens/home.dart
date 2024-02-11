@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:overmap/helpers/place_details.dart';
+import 'package:overmap/helpers/place.dart';
 import 'package:overmap/models/stacked_maps_model.dart';
 import 'package:overmap/screens/search_place.dart';
 import 'package:overmap/screens/stacked_maps.dart';
@@ -49,7 +49,7 @@ class _HomeState extends State<Home> {
       max: 1.0,
       onChanged: sliderMoved);
 
-  void setBackPlace(PlaceDetails place) {
+  void setBackPlace(Place place) {
     double latitude = place.lat;
     double longitude = place.lng;
     String name = place.name;
@@ -61,7 +61,7 @@ class _HomeState extends State<Home> {
         .updateBackMapLocation = true;
   }
 
-  void setFrontPlace(PlaceDetails place) {
+  void setFrontPlace(Place place) {
     double latitude = place.lat;
     double longitude = place.lng;
     String name = place.name;
@@ -82,7 +82,7 @@ class _HomeState extends State<Home> {
   }
 
   searchLeftPlace() {
-    searchPlace((PlaceDetails place) {
+    searchPlace((Place place) {
       setState(() {
         if (isLeftPlaceInFront) {
           setFrontPlace(place);
@@ -97,7 +97,7 @@ class _HomeState extends State<Home> {
   }
 
   searchRightPlace() {
-    searchPlace((PlaceDetails place) {
+    searchPlace((Place place) {
       setState(() {
         if (isRightPlaceInFront) {
           setFrontPlace(place);

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:overmap/helpers/place_attributes.dart';
-import 'package:overmap/helpers/place_details.dart';
+import 'package:overmap/helpers/place.dart';
 import 'package:overmap/services/google_places_service.dart';
 
 class SearchPlace extends StatefulWidget {
@@ -41,16 +40,7 @@ class _SearchPlaceState extends State<SearchPlace> {
         Map<String, dynamic> placeData =
             response[GooglePlacesService.response.result];
 
-        var location = placeData[PlaceAttributes.geometry]
-                ?[PlaceAttributes.location] ??
-            {PlaceAttributes.lat: 0.0, PlaceAttributes.lng: 0.0};
-
-        PlaceDetails placeDetails = PlaceDetails(
-          lat: location[PlaceAttributes.lat],
-          lng: location[PlaceAttributes.lng],
-          name: placeData[PlaceAttributes.name] ??
-              'ERROR: Retrieving place for placeId: ${place['place_id']}',
-        );
+        Place placeDetails = Place(details: placeData);
 
         widget.selectedPlace(placeDetails);
       }
