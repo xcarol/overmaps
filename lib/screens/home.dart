@@ -21,8 +21,10 @@ class _HomeState extends State<Home> {
   get isLeftPlaceInFront => _opacity <= StackedMapsModel.halfOpacity;
   get isRightPlaceInFront => _opacity > StackedMapsModel.halfOpacity;
 
-  get rightAlignment => isRightPlaceInFront ? Alignment.topRight : Alignment.topLeft;
-  get leftAlignment => isRightPlaceInFront ? Alignment.bottomLeft : Alignment.bottomRight;
+  get rightAlignment =>
+      isRightPlaceInFront ? Alignment.topRight : Alignment.topLeft;
+  get leftAlignment =>
+      isRightPlaceInFront ? Alignment.bottomLeft : Alignment.bottomRight;
   get rightNameText => Text(isRightPlaceInFront ? _rightName : _leftName);
   get leftNameText => Text(isRightPlaceInFront ? _leftName : _rightName);
 
@@ -52,9 +54,11 @@ class _HomeState extends State<Home> {
     double longitude = place.lng;
     String name = place.name;
 
-    Provider.of<StackedMapsModel>(context, listen: false).backPlaceLocation = LatLng(latitude, longitude);
+    Provider.of<StackedMapsModel>(context, listen: false).backPlaceLocation =
+        LatLng(latitude, longitude);
     Provider.of<StackedMapsModel>(context, listen: false).backPlaceName = name;
-    Provider.of<StackedMapsModel>(context, listen: false).updateBackMapLocation = true;
+    Provider.of<StackedMapsModel>(context, listen: false)
+        .updateBackMapLocation = true;
   }
 
   void setFrontPlace(PlaceDetails place) {
@@ -62,15 +66,18 @@ class _HomeState extends State<Home> {
     double longitude = place.lng;
     String name = place.name;
 
-    Provider.of<StackedMapsModel>(context, listen: false).frontPlaceLocation = LatLng(latitude, longitude);
+    Provider.of<StackedMapsModel>(context, listen: false).frontPlaceLocation =
+        LatLng(latitude, longitude);
     Provider.of<StackedMapsModel>(context, listen: false).frontPlaceName = name;
-    Provider.of<StackedMapsModel>(context, listen: false).updateFrontMapLocation = true;
+    Provider.of<StackedMapsModel>(context, listen: false)
+        .updateFrontMapLocation = true;
   }
 
   searchPlace(Function selectedPlace) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => SearchPlace(selectedPlace: selectedPlace)),
+      MaterialPageRoute(
+          builder: (context) => SearchPlace(selectedPlace: selectedPlace)),
     );
   }
 

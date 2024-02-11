@@ -13,7 +13,8 @@ class SearchPlace extends StatefulWidget {
 }
 
 class _SearchPlaceState extends State<SearchPlace> {
-  final GooglePlacesService _service = GooglePlacesService(mapsApiKey: const String.fromEnvironment("MAPS_API_KEY"));
+  final GooglePlacesService _service = GooglePlacesService(
+      mapsApiKey: const String.fromEnvironment("MAPS_API_KEY"));
   late List placesListItems = List.empty();
 
   @override
@@ -23,7 +24,11 @@ class _SearchPlaceState extends State<SearchPlace> {
         title: const Text('Overmap'),
       ),
       body: Column(
-        children: <Widget>[placesEditBox(), const SizedBox(height: 10.0), placesListBox()],
+        children: <Widget>[
+          placesEditBox(),
+          const SizedBox(height: 10.0),
+          placesListBox()
+        ],
       ),
     );
   }
@@ -33,15 +38,18 @@ class _SearchPlaceState extends State<SearchPlace> {
       String status = response[GooglePlacesService.response.status];
 
       if (status == GooglePlacesService.response.ok) {
-        Map<String, dynamic> placeData = response[GooglePlacesService.response.result];
+        Map<String, dynamic> placeData =
+            response[GooglePlacesService.response.result];
 
-        var location = placeData[PlaceAttributes.geometry]?[PlaceAttributes.location] ??
+        var location = placeData[PlaceAttributes.geometry]
+                ?[PlaceAttributes.location] ??
             {PlaceAttributes.lat: 0.0, PlaceAttributes.lng: 0.0};
 
         PlaceDetails placeDetails = PlaceDetails(
           lat: location[PlaceAttributes.lat],
           lng: location[PlaceAttributes.lng],
-          name: placeData[PlaceAttributes.name] ?? 'ERROR: Retrieving place for placeId: ${place['place_id']}',
+          name: placeData[PlaceAttributes.name] ??
+              'ERROR: Retrieving place for placeId: ${place['place_id']}',
         );
 
         widget.selectedPlace(placeDetails);

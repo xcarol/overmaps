@@ -15,8 +15,9 @@ class GooglePlacesService {
 
   Future<dynamic> searchPlaces(String search) async {
     try {
-      final response =
-          await http.get(Uri.parse(_searchUrl.replaceFirst('{SEARCH}', search).replaceFirst('{KEY}', mapsApiKey)));
+      final response = await http.get(Uri.parse(_searchUrl
+          .replaceFirst('{SEARCH}', search)
+          .replaceFirst('{KEY}', mapsApiKey)));
 
       if (response.statusCode == 200) {
         return json.decode(response.body);
@@ -29,8 +30,9 @@ class GooglePlacesService {
   }
 
   Future<dynamic> getPlaceDetails(String placeId) async {
-    final response =
-        await http.get(Uri.parse(_placeUrl.replaceFirst('{PLACE_ID}', placeId).replaceFirst('{KEY}', mapsApiKey)));
+    final response = await http.get(Uri.parse(_placeUrl
+        .replaceFirst('{PLACE_ID}', placeId)
+        .replaceFirst('{KEY}', mapsApiKey)));
 
     if (response.statusCode == 200) {
       return json.decode(response.body);

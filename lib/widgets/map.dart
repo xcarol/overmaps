@@ -8,18 +8,24 @@ class Map extends StatefulWidget {
   final LatLng latLng;
   final Function onCameraMove, onMapCreated;
 
-  const Map({super.key, required this.latLng, required this.onMapCreated, required this.onCameraMove});
+  const Map(
+      {super.key,
+      required this.latLng,
+      required this.onMapCreated,
+      required this.onCameraMove});
 
   @override
   State createState() => _MapState();
 
   static zoom(GoogleMapController? controller, CameraPosition position) {
     controller?.getZoomLevel().then((zoom) => {
-          if (zoom != position.zoom) {controller.moveCamera(CameraUpdate.zoomTo(position.zoom))}
+          if (zoom != position.zoom)
+            {controller.moveCamera(CameraUpdate.zoomTo(position.zoom))}
         });
   }
 
-  static setCameraPosition(GoogleMapController? controller, CameraPosition position) {
+  static setCameraPosition(
+      GoogleMapController? controller, CameraPosition position) {
     controller?.moveCamera(CameraUpdate.newCameraPosition(position));
   }
 }
@@ -45,7 +51,8 @@ class _MapState extends State<Map> {
       ));
 
   void _onMapCreated(GoogleMapController controller) {
-    controller.setMapStyle('[{"featureType": "administrative","elementType": "geometry","stylers": [{"visibility": "off"}]},{"featureType": "poi","stylers": [{"visibility": "off"}]},{"featureType": "road","elementType": "labels.icon","stylers": [{"visibility": "off"}]},{"featureType": "transit","stylers": [{"visibility": "off"}]}]');
+    controller.setMapStyle(
+        '[{"featureType": "administrative","elementType": "geometry","stylers": [{"visibility": "off"}]},{"featureType": "poi","stylers": [{"visibility": "off"}]},{"featureType": "road","elementType": "labels.icon","stylers": [{"visibility": "off"}]},{"featureType": "transit","stylers": [{"visibility": "off"}]}]');
     _mapController = controller;
     widget.onMapCreated(_mapController);
   }
