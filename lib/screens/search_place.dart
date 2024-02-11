@@ -13,7 +13,7 @@ class SearchPlace extends StatefulWidget {
 }
 
 class _SearchPlaceState extends State<SearchPlace> {
-  final GooglePlacesService _service = GooglePlacesService(mapsApiKey: '');
+  final GooglePlacesService _service = GooglePlacesService(mapsApiKey: const String.fromEnvironment("MAPS_API_KEY"));
   late List placesListItems = List.empty();
 
   @override
