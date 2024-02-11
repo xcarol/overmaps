@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:google_places_flutter/model/prediction.dart';
+import 'package:overmap/helpers/place.dart';
 import 'package:overmap/models/stacked_maps_model.dart';
-import 'package:overmap/screens/search.dart';
+import 'package:overmap/screens/search_place.dart';
 import 'package:overmap/screens/stacked_maps.dart';
 import 'package:provider/provider.dart';
 
@@ -21,8 +21,10 @@ class _HomeState extends State<Home> {
   get isLeftPlaceInFront => _opacity <= StackedMapsModel.halfOpacity;
   get isRightPlaceInFront => _opacity > StackedMapsModel.halfOpacity;
 
-  get rightAlignment => isRightPlaceInFront ? Alignment.topRight : Alignment.topLeft;
-  get leftAlignment => isRightPlaceInFront ? Alignment.bottomLeft : Alignment.bottomRight;
+  get rightAlignment =>
+      isRightPlaceInFront ? Alignment.topRight : Alignment.topLeft;
+  get leftAlignment =>
+      isRightPlaceInFront ? Alignment.bottomLeft : Alignment.bottomRight;
   get rightNameText => Text(isRightPlaceInFront ? _rightName : _leftName);
   get leftNameText => Text(isRightPlaceInFront ? _leftName : _rightName);
 
@@ -47,50 +49,47 @@ class _HomeState extends State<Home> {
       max: 1.0,
       onChanged: sliderMoved);
 
-  void setBackPlace(Prediction place) {
-    LatLng currentLocation = Provider.of<StackedMapsModel>(context, listen: false).backPlaceLocation;
-    double latitude = double.parse(place.lat ?? currentLocation.latitude.toString());
-    double longitude = double.parse(place.lng ?? currentLocation.longitude.toString());
+  void setBackPlace(Place place) {
+    double latitude = place.lat;
+    double longitude = place.lng;
+    String name = place.name;
 
-    String currentName = Provider.of<StackedMapsModel>(context, listen: false).backPlaceName;
-    String name = place.structuredFormatting?.mainText ?? currentName;
-
-    Provider.of<StackedMapsModel>(context, listen: false).backPlaceLocation = LatLng(latitude, longitude);
+    Provider.of<StackedMapsModel>(context, listen: false).backPlaceLocation =
+        LatLng(latitude, longitude);
     Provider.of<StackedMapsModel>(context, listen: false).backPlaceName = name;
-    Provider.of<StackedMapsModel>(context, listen: false).updateBackMapLocation = true;
+    Provider.of<StackedMapsModel>(context, listen: false)
+        .updateBackMapLocation = true;
   }
 
-  void setFrontPlace(Prediction place) {
-    LatLng currentLocation = Provider.of<StackedMapsModel>(context, listen: false).frontPlaceLocation;
-    double latitude = double.parse(place.lat ?? currentLocation.latitude.toString());
-    double longitude = double.parse(place.lng ?? currentLocation.longitude.toString());
+  void setFrontPlace(Place place) {
+    double latitude = place.lat;
+    double longitude = place.lng;
+    String name = place.name;
 
-    String currentName = Provider.of<StackedMapsModel>(context, listen: false).frontPlaceName;
-    String name = place.structuredFormatting?.mainText ?? currentName;
-
-    Provider.of<StackedMapsModel>(context, listen: false).frontPlaceLocation = LatLng(latitude,longitude);
+    Provider.of<StackedMapsModel>(context, listen: false).frontPlaceLocation =
+        LatLng(latitude, longitude);
     Provider.of<StackedMapsModel>(context, listen: false).frontPlaceName = name;
-    Provider.of<StackedMapsModel>(context, listen: false).updateFrontMapLocation = true;
+    Provider.of<StackedMapsModel>(context, listen: false)
+        .updateFrontMapLocation = true;
   }
 
   searchPlace(Function selectedPlace) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => SearchPlace(selectedPlace: selectedPlace)),
+      MaterialPageRoute(
+          builder: (context) => SearchPlace(selectedPlace: selectedPlace)),
     );
   }
 
   searchLeftPlace() {
-    searchPlace((Prediction place) {
+    searchPlace((Place place) {
       setState(() {
         if (isLeftPlaceInFront) {
           setFrontPlace(place);
-          _leftName = place.structuredFormatting?.mainText ??
-              Provider.of<StackedMapsModel>(context, listen: false).frontPlaceName;
+          _leftName = place.name;
         } else {
           setBackPlace(place);
-          _leftName = place.structuredFormatting?.mainText ??
-              Provider.of<StackedMapsModel>(context, listen: false).backPlaceName;
+          _leftName = place.name;
         }
       });
       Navigator.pop(context);
@@ -98,16 +97,14 @@ class _HomeState extends State<Home> {
   }
 
   searchRightPlace() {
-    searchPlace((Prediction place) {
+    searchPlace((Place place) {
       setState(() {
         if (isRightPlaceInFront) {
           setFrontPlace(place);
-          _rightName = place.structuredFormatting?.mainText ??
-              Provider.of<StackedMapsModel>(context, listen: false).frontPlaceName;
+          _rightName = place.name;
         } else {
           setBackPlace(place);
-          _rightName = place.structuredFormatting?.mainText ??
-              Provider.of<StackedMapsModel>(context, listen: false).backPlaceName;
+          _rightName = place.name;
         }
       });
       Navigator.pop(context);

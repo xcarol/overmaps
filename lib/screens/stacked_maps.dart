@@ -17,24 +17,35 @@ class _StackedMapsState extends State<StackedMaps> {
   GoogleMapController? _frontController;
   GoogleMapController? _backController;
 
-  late CameraPosition _frontCameraPosition = CameraPosition(target: StackedMapsModel.sydneyLocation);
-  late CameraPosition _backCameraPosition = CameraPosition(target: StackedMapsModel.barcelonaLocation);
+  late CameraPosition _frontCameraPosition =
+      CameraPosition(target: StackedMapsModel.sydneyLocation);
+  late CameraPosition _backCameraPosition =
+      CameraPosition(target: StackedMapsModel.barcelonaLocation);
 
-  get backMap =>
-      Map(latLng: _backCameraPosition.target, onMapCreated: backMapCreated(), onCameraMove: backCameraMove());
+  get backMap => Map(
+      latLng: _backCameraPosition.target,
+      onMapCreated: backMapCreated(),
+      onCameraMove: backCameraMove());
 
-  get frontMap =>
-      Map(latLng: _frontCameraPosition.target, onMapCreated: frontMapCreated(), onCameraMove: frontCameraMove());
+  get frontMap => Map(
+      latLng: _frontCameraPosition.target,
+      onMapCreated: frontMapCreated(),
+      onCameraMove: frontCameraMove());
 
-  double get frontMapOpacity =>
-      (_opacity > StackedMapsModel.halfOpacity ? _opacity : StackedMapsModel.opaque - _opacity);
+  double get frontMapOpacity => (_opacity > StackedMapsModel.halfOpacity
+      ? _opacity
+      : StackedMapsModel.opaque - _opacity);
 
-  stackedMaps(frontMap, backMap) =>
-      [Opacity(opacity: StackedMapsModel.opaque, child: backMap), Opacity(opacity: frontMapOpacity, child: frontMap)];
+  stackedMaps(frontMap, backMap) => [
+        Opacity(opacity: StackedMapsModel.opaque, child: backMap),
+        Opacity(opacity: frontMapOpacity, child: frontMap)
+      ];
 
   bool needSwitchMaps(StackedMapsModel map) {
-    return (_opacity > StackedMapsModel.halfOpacity && map.opacity <= StackedMapsModel.halfOpacity) ||
-        (_opacity <= StackedMapsModel.halfOpacity && map.opacity > StackedMapsModel.halfOpacity);
+    return (_opacity > StackedMapsModel.halfOpacity &&
+            map.opacity <= StackedMapsModel.halfOpacity) ||
+        (_opacity <= StackedMapsModel.halfOpacity &&
+            map.opacity > StackedMapsModel.halfOpacity);
   }
 
   backMapCreated() {
@@ -66,12 +77,16 @@ class _StackedMapsState extends State<StackedMaps> {
     };
   }
 
-  CameraPosition updateCameraLocation(GoogleMapController? controller, CameraPosition cameraPosition, LatLng location) {
+  CameraPosition updateCameraLocation(GoogleMapController? controller,
+      CameraPosition cameraPosition, LatLng location) {
     return CameraPosition(
-        target: location, bearing: cameraPosition.bearing, tilt: cameraPosition.tilt, zoom: cameraPosition.zoom);
+        target: location,
+        bearing: cameraPosition.bearing,
+        tilt: cameraPosition.tilt,
+        zoom: cameraPosition.zoom);
   }
 
-  updateMap(GoogleMapController controller, CameraPosition position) {
+  updateMap(GoogleMapController? controller, CameraPosition position) {
     Map.setCameraPosition(controller, position);
   }
 
@@ -92,14 +107,16 @@ class _StackedMapsState extends State<StackedMaps> {
       }
 
       if (map.updateFrontMapLocation) {
-        _frontCameraPosition = updateCameraLocation(_frontController, _frontCameraPosition, map.frontPlaceLocation);
-        updateMap(_frontController!, _frontCameraPosition);
+        _frontCameraPosition = updateCameraLocation(
+            _frontController, _frontCameraPosition, map.frontPlaceLocation);
+        updateMap(_frontController, _frontCameraPosition);
         map.updateFrontMapLocation = false;
       }
 
       if (map.updateBackMapLocation) {
-        _backCameraPosition = updateCameraLocation(_backController, _backCameraPosition, map.backPlaceLocation);
-        updateMap(_backController!, _backCameraPosition);
+        _backCameraPosition = updateCameraLocation(
+            _backController, _backCameraPosition, map.backPlaceLocation);
+        updateMap(_backController, _backCameraPosition);
         map.updateBackMapLocation = false;
       }
 
