@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class StackedMapsModel extends ChangeNotifier {
-  static LatLng barcelonaLocation =
-      const LatLng(-33.85999989127037, 151.1999999731779);
-  static LatLng sydneyLocation =
-      const LatLng(41.447178768107136, 2.1920866146683693);
+  static LatLng sydneyLocation = const LatLng(-33.8698439, 151.2082848);
+  static LatLng barcelonaLocation = const LatLng(41.3828939, 2.1774322);
   static String barcelonaName = "Barcelona";
   static String sydneyName = "Sydney";
   static double halfOpacity = 0.5;
