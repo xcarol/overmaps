@@ -51,9 +51,12 @@ class _MapState extends State<Map> {
       ));
 
   void _onMapCreated(GoogleMapController controller) {
-    controller.setMapStyle(
-        '[{"featureType": "administrative","elementType": "geometry","stylers": [{"visibility": "off"}]},{"featureType": "poi","stylers": [{"visibility": "off"}]},{"featureType": "road","elementType": "labels.icon","stylers": [{"visibility": "off"}]},{"featureType": "transit","stylers": [{"visibility": "off"}]}]');
     _mapController = controller;
+    _mapController.setMapStyle('['
+        '  {"featureType": "poi","stylers": [{"visibility": "off"}]},'
+        '  {"featureType": "road","elementType": "labels.icon","stylers": [{"visibility": "off"}]},'
+        '  {"featureType": "transit","stylers": [{"visibility": "off"}]}'
+        ']');
     widget.onMapCreated(_mapController);
   }
 
