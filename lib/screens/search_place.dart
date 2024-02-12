@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:overmap/helpers/place.dart';
-import 'package:overmap/services/google_places_service.dart';
+import 'package:overmap/services/places_service.dart';
 
 class SearchPlace extends StatefulWidget {
   final Function selectedPlace;
@@ -12,8 +12,8 @@ class SearchPlace extends StatefulWidget {
 }
 
 class _SearchPlaceState extends State<SearchPlace> {
-  final GooglePlacesService _service = GooglePlacesService(
-      mapsApiKey: const String.fromEnvironment("MAPS_API_KEY"));
+  final PlacesService _service = PlacesService(
+      googleMapsApiKey: const String.fromEnvironment("MAPS_API_KEY"));
   late List placesListItems = List.empty();
 
   @override
@@ -34,11 +34,11 @@ class _SearchPlaceState extends State<SearchPlace> {
 
   selectPlace(place) {
     _service.getPlaceDetails(place['place_id']).then((response) {
-      String status = response[GooglePlacesService.response.status];
+      String status = response[PlacesService.response.status];
 
-      if (status == GooglePlacesService.response.ok) {
+      if (status == PlacesService.response.ok) {
         Map<String, dynamic> placeData =
-            response[GooglePlacesService.response.result];
+            response[PlacesService.response.result];
 
         Place placeDetails = Place(details: placeData);
 
