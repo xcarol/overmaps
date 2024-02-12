@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:overmap/widgets/map.dart';
+import 'package:overmap/widgets/over_map.dart';
 import 'package:overmap/models/stacked_maps_model.dart';
 import 'package:provider/provider.dart';
 
@@ -22,12 +22,12 @@ class _StackedMapsState extends State<StackedMaps> {
   late CameraPosition _backCameraPosition =
       CameraPosition(target: StackedMapsModel.barcelonaLocation);
 
-  get backMap => Map(
+  get backMap => OverMap(
       latLng: _backCameraPosition.target,
       onMapCreated: backMapCreated(),
       onCameraMove: backCameraMove());
 
-  get frontMap => Map(
+  get frontMap => OverMap(
       latLng: _frontCameraPosition.target,
       onMapCreated: frontMapCreated(),
       onCameraMove: frontCameraMove());
@@ -73,7 +73,7 @@ class _StackedMapsState extends State<StackedMaps> {
   frontCameraMove() {
     return (CameraPosition position) {
       _frontCameraPosition = position;
-      Map.zoom(_backController, position);
+      OverMap.zoom(_backController, position);
     };
   }
 
@@ -87,7 +87,7 @@ class _StackedMapsState extends State<StackedMaps> {
   }
 
   updateMap(GoogleMapController? controller, CameraPosition position) {
-    Map.setCameraPosition(controller, position);
+    OverMap.setCameraPosition(controller, position);
   }
 
   switchMaps() {
@@ -95,8 +95,8 @@ class _StackedMapsState extends State<StackedMaps> {
     _frontCameraPosition = _backCameraPosition;
     _backCameraPosition = copyCameraPosition;
 
-    Map.setCameraPosition(_frontController, _frontCameraPosition);
-    Map.setCameraPosition(_backController, _backCameraPosition);
+    OverMap.setCameraPosition(_frontController, _frontCameraPosition);
+    OverMap.setCameraPosition(_backController, _backCameraPosition);
   }
 
   @override

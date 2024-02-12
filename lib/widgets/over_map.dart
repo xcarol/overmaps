@@ -4,18 +4,18 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:overmap/models/stacked_maps_model.dart';
 
-class Map extends StatefulWidget {
+class OverMap extends StatefulWidget {
   final LatLng latLng;
   final Function onCameraMove, onMapCreated;
 
-  const Map(
+  const OverMap(
       {super.key,
       required this.latLng,
       required this.onMapCreated,
       required this.onCameraMove});
 
   @override
-  State createState() => _MapState();
+  State createState() => _OverMapState();
 
   static zoom(GoogleMapController? controller, CameraPosition position) {
     controller?.getZoomLevel().then((zoom) => {
@@ -30,7 +30,7 @@ class Map extends StatefulWidget {
   }
 }
 
-class _MapState extends State<Map> {
+class _OverMapState extends State<OverMap> {
   late GoogleMapController _mapController;
 
   Widget get unsupportedPlatformWidget => Center(
@@ -50,7 +50,7 @@ class _MapState extends State<Map> {
         zoom: StackedMapsModel.defaultZoom,
       ));
 
-  void _onMapCreated(GoogleMapController controller) {
+  void _onMapCreated(GoogleMapController controller) async {
     _mapController = controller;
     _mapController.setMapStyle('['
         '  {"featureType": "poi","stylers": [{"visibility": "off"}]},'
