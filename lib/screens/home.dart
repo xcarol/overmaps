@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:overmap/helpers/place.dart';
+import 'package:overmap/models/place.dart';
 import 'package:overmap/models/stacked_maps_model.dart';
 import 'package:overmap/screens/search_place.dart';
 import 'package:overmap/screens/stacked_maps.dart';
