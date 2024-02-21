@@ -65,7 +65,7 @@ _secrets.properties_
 
 ## Application signing and publishing
 
-As this is a one time process, I cannot step back to do the process again, so here it is useful information in case it is needed do this process again. God bless we don't.  
+As this is a one time process, I cannot step back to do the process again, so here it is useful information in case it is needed do this process again. God willing 🤞😅.  
 
 Links to follow:  
 
