@@ -14,7 +14,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  late double _opacity = StackedMapsModel.halfOpacity;
+  late double _opacity = StackedMapsModel.initialOpacity;
   late String _rightName = StackedMapsModel.sydneyName;
   late String _leftName = StackedMapsModel.barcelonaName;
 
@@ -57,8 +57,6 @@ class _HomeState extends State<Home> {
     Provider.of<StackedMapsModel>(context, listen: false).backPlaceLocation =
         LatLng(latitude, longitude);
     Provider.of<StackedMapsModel>(context, listen: false).backPlaceName = name;
-    Provider.of<StackedMapsModel>(context, listen: false)
-        .updateBackMapLocation = true;
   }
 
   void setFrontPlace(Place place) {
@@ -69,8 +67,6 @@ class _HomeState extends State<Home> {
     Provider.of<StackedMapsModel>(context, listen: false).frontPlaceLocation =
         LatLng(latitude, longitude);
     Provider.of<StackedMapsModel>(context, listen: false).frontPlaceName = name;
-    Provider.of<StackedMapsModel>(context, listen: false)
-        .updateFrontMapLocation = true;
   }
 
   searchPlace(Function selectedPlace) {
