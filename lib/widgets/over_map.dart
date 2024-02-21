@@ -5,14 +5,19 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:overmap/models/stacked_maps_model.dart';
 
 class OverMap extends StatefulWidget {
-  final LatLng latLng;
+  final String place;
+  final LatLng coordinates;
+  final Set<Polyline> boundaries;
   final Function onCameraMove, onMapCreated;
 
-  const OverMap(
-      {super.key,
-      required this.latLng,
-      required this.onMapCreated,
-      required this.onCameraMove});
+  const OverMap({
+    super.key,
+    required this.place,
+    required this.coordinates,
+    required this.boundaries,
+    required this.onMapCreated,
+    required this.onCameraMove,
+  });
 
   @override
   State createState() => _OverMapState();
@@ -37,18 +42,21 @@ class _OverMapState extends State<OverMap> {
           child: Column(children: [
         const Text('Android is the only platform currently supported.\n'),
         const Text('Coordinates\n'),
-        Text('Latitude: ${widget.latLng.latitude}'),
-        Text('Longitude: ${widget.latLng.longitude}'),
+        Text('Latitude: ${widget.coordinates.latitude}'),
+        Text('Longitude: ${widget.coordinates.longitude}'),
       ]));
 
-  Widget get mapWidget => GoogleMap(
-      onMapCreated: _onMapCreated,
-      onCameraMove: _onCameraMove,
-      zoomControlsEnabled: false,
-      initialCameraPosition: CameraPosition(
-        target: widget.latLng,
-        zoom: StackedMapsModel.defaultZoom,
-      ));
+  Widget mapWidget() {
+    return GoogleMap(
+        onMapCreated: _onMapCreated,
+        onCameraMove: _onCameraMove,
+        zoomControlsEnabled: false,
+        polylines: widget.boundaries,
+        initialCameraPosition: CameraPosition(
+          target: widget.coordinates,
+          zoom: StackedMapsModel.defaultZoom,
+        ));
+  }
 
   void _onMapCreated(GoogleMapController controller) async {
     _mapController = controller;
@@ -68,11 +76,12 @@ class _OverMapState extends State<OverMap> {
   Widget build(BuildContext context) {
     late Widget childWidget;
 
-    // Check first if it's running on a Web Browser because dart:io Platform class is not implemented in this case.
+    // Check first if it's running on a Web Browser
+    // because dart:io Platform class is not implemented in this case.
     if (kIsWeb || Platform.isAndroid == false) {
       childWidget = unsupportedPlatformWidget;
     } else {
-      childWidget = mapWidget;
+      childWidget = mapWidget();
     }
 
     return childWidget;
