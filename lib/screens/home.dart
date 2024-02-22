@@ -14,6 +14,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  final Color _rightBoundaryColor = StackedMapsModel.colorBlue;
+  final Color _leftBoundaryColor = StackedMapsModel.colorRed;
   late double _opacity = StackedMapsModel.initialOpacity;
   late String _rightName = StackedMapsModel.sydneyName;
   late String _leftName = StackedMapsModel.barcelonaName;
@@ -49,7 +51,7 @@ class _HomeState extends State<Home> {
       max: 1.0,
       onChanged: sliderMoved);
 
-  void setBackPlace(Place place) {
+  void setBackPlace(Place place, Color boundaryColor) {
     double latitude = place.lat;
     double longitude = place.lng;
     String name = place.name;
@@ -57,9 +59,10 @@ class _HomeState extends State<Home> {
     Provider.of<StackedMapsModel>(context, listen: false).backPlaceLocation =
         LatLng(latitude, longitude);
     Provider.of<StackedMapsModel>(context, listen: false).backPlaceName = name;
+    Provider.of<StackedMapsModel>(context, listen: false).backPlaceBoundaryColor = boundaryColor;
   }
 
-  void setFrontPlace(Place place) {
+  void setFrontPlace(Place place, Color boundaryColor) {
     double latitude = place.lat;
     double longitude = place.lng;
     String name = place.name;
@@ -67,6 +70,7 @@ class _HomeState extends State<Home> {
     Provider.of<StackedMapsModel>(context, listen: false).frontPlaceLocation =
         LatLng(latitude, longitude);
     Provider.of<StackedMapsModel>(context, listen: false).frontPlaceName = name;
+    Provider.of<StackedMapsModel>(context, listen: false).frontPlaceBoundaryColor = boundaryColor;
   }
 
   searchPlace(Function selectedPlace) {
@@ -81,12 +85,11 @@ class _HomeState extends State<Home> {
     searchPlace((Place place) {
       setState(() {
         if (isLeftPlaceInFront) {
-          setFrontPlace(place);
-          _leftName = place.name;
+          setFrontPlace(place, _leftBoundaryColor);
         } else {
-          setBackPlace(place);
-          _leftName = place.name;
+          setBackPlace(place, _leftBoundaryColor);
         }
+        _leftName = place.name;
       });
       Navigator.pop(context);
     });
@@ -96,12 +99,11 @@ class _HomeState extends State<Home> {
     searchPlace((Place place) {
       setState(() {
         if (isRightPlaceInFront) {
-          setFrontPlace(place);
-          _rightName = place.name;
+          setFrontPlace(place, _rightBoundaryColor);
         } else {
-          setBackPlace(place);
-          _rightName = place.name;
+          setBackPlace(place, _rightBoundaryColor);
         }
+        _rightName = place.name;
       });
       Navigator.pop(context);
     });
