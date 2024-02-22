@@ -117,7 +117,7 @@ class _StackedMapsState extends State<StackedMaps> {
 
   void setFrontMapBoundary(StackedMapsModel map) async {
     var value = await getMapBoundary(map.frontPlaceName, map.frontPlaceLocation,
-        StackedMapsModel.frontPlacePolylineId);
+        StackedMapsModel.frontPlacePolylineId, map.frontPlaceBoundaryColor);
     setState(() {
       _frontPlacePolyline = value;
     });
@@ -125,24 +125,24 @@ class _StackedMapsState extends State<StackedMaps> {
 
   void setBackMapBoundary(StackedMapsModel map) async {
     var value = await getMapBoundary(map.backPlaceName, map.backPlaceLocation,
-        StackedMapsModel.backPlacePolylineId);
+        StackedMapsModel.backPlacePolylineId, map.backPlaceBoundaryColor);
     setState(() {
       _backPlacePolyline = value;
     });
   }
 
   Future<Set<Polyline>> getMapBoundary(
-      String place, LatLng coordinates, PolylineId polylineId) async {
+      String place, LatLng coordinates, PolylineId polylineId, Color boundaryColor) async {
     PlacesService placesService = PlacesService(
         googleMapsApiKey: const String.fromEnvironment("MAPS_API_KEY"));
 
     List<String> polygons = await placesService.getPlaceBoundaryPolygons(
         place, coordinates.latitude, coordinates.longitude);
 
-    return Future(() => getBoundaries(polygons));
+    return Future(() => getBoundaries(polygons, boundaryColor));
   }
 
-  Set<Polyline> getBoundaries(List<String> polygons) {
+  Set<Polyline> getBoundaries(List<String> polygons, Color boundaryColor) {
     Set<Polyline> boundaries = {};
     
     for (String polygon in polygons) {
@@ -160,8 +160,8 @@ class _StackedMapsState extends State<StackedMaps> {
         boundaries.add(Polyline(
             polylineId: PolylineId(DateTime.now().toString()),
             points: polylinePoints,
-            width: 1,
-            color: Colors.red));
+            width: 2,
+            color: boundaryColor));
       }
     }
     
