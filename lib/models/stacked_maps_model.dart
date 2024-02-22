@@ -10,6 +10,8 @@ class StackedMapsModel extends ChangeNotifier {
   static double halfOpacity = 0.5;
   static double opaque = 1.0;
   static double defaultZoom = 11.0;
+  static Color colorRed = Colors.red;
+  static Color colorBlue = Colors.blue;
   static PolylineId frontPlacePolylineId =
       const PolylineId('frontPlacePolylineId');
   static PolylineId backPlacePolylineId =
@@ -23,6 +25,8 @@ class StackedMapsModel extends ChangeNotifier {
   LatLng _backPlaceLocation = sydneyLocation;
   String _frontPlaceName = barcelonaName;
   String _backPlaceName = sydneyName;
+  Color _frontPlaceBoundaryColor = colorRed;
+  Color _backPlaceBoundaryColor = colorBlue;
 
   bool get updateFrontMap => _updateFrontMap;
   bool get updateBackMap => _updateBackMap;
@@ -31,6 +35,8 @@ class StackedMapsModel extends ChangeNotifier {
   LatLng get backPlaceLocation => _backPlaceLocation;
   String get frontPlaceName => _frontPlaceName;
   String get backPlaceName => _backPlaceName;
+  Color get frontPlaceBoundaryColor => _frontPlaceBoundaryColor;
+  Color get backPlaceBoundaryColor => _backPlaceBoundaryColor;
 
   resetUpdateFrontMap() {
     _updateFrontMap = false;
@@ -64,6 +70,16 @@ class StackedMapsModel extends ChangeNotifier {
 
   set backPlaceName(String name) {
     _backPlaceName = name;
+    notifyListeners();
+  }
+
+  set frontPlaceBoundaryColor(Color color) {
+    _frontPlaceBoundaryColor = color;
+    notifyListeners();
+  }
+
+  set backPlaceBoundaryColor(Color color) {
+    _backPlaceBoundaryColor = color;
     notifyListeners();
   }
 }
