@@ -24,9 +24,6 @@ class StackedMapsModel extends ChangeNotifier {
   String _frontPlaceName = barcelonaName;
   String _backPlaceName = sydneyName;
 
-  Polyline _frontPlacePolyline = Polyline(polylineId: frontPlacePolylineId);
-  Polyline _backPlacePolyline = Polyline(polylineId: backPlacePolylineId);
-
   bool get updateFrontMap => _updateFrontMap;
   bool get updateBackMap => _updateBackMap;
   double get opacity => _opacity;
@@ -34,9 +31,6 @@ class StackedMapsModel extends ChangeNotifier {
   LatLng get backPlaceLocation => _backPlaceLocation;
   String get frontPlaceName => _frontPlaceName;
   String get backPlaceName => _backPlaceName;
-
-  Polyline get frontPlacePolyline => _frontPlacePolyline;
-  Polyline get backPlacePolyline => _backPlacePolyline;
 
   resetUpdateFrontMap() {
     _updateFrontMap = false;
@@ -70,16 +64,6 @@ class StackedMapsModel extends ChangeNotifier {
 
   set backPlaceName(String name) {
     _backPlaceName = name;
-    notifyListeners();
-  }
-
-  set frontPlacePolyline(Polyline polyline) {
-    _frontPlacePolyline = polyline;
-    notifyListeners();
-  }
-
-  set backPlacePolyline(Polyline polyline) {
-    _backPlacePolyline = polyline;
     notifyListeners();
   }
 }
