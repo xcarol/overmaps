@@ -2,30 +2,49 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class StackedMapsModel extends ChangeNotifier {
-  static LatLng barcelonaLocation =
-      const LatLng(-33.85999989127037, 151.1999999731779);
-  static LatLng sydneyLocation =
-      const LatLng(41.447178768107136, 2.1920866146683693);
-  static String barcelonaName = "Barcelona";
-  static String sydneyName = "Sydney";
+  static LatLng sydneyLocation = const LatLng(-33.8698439, 151.2082848);
+  static LatLng barcelonaLocation = const LatLng(41.3828939, 2.1774322);
+  static String barcelonaName = 'Barcelona';
+  static String sydneyName = 'Sydney';
+  static double initialOpacity = 0.3;
   static double halfOpacity = 0.5;
   static double opaque = 1.0;
   static double defaultZoom = 11.0;
+  static Color colorRed = Colors.red;
+  static Color colorBlue = Colors.blue;
+  static PolylineId frontPlacePolylineId =
+      const PolylineId('frontPlacePolylineId');
+  static PolylineId backPlacePolylineId =
+      const PolylineId('backPlacePolylineId');
 
-  bool updateFrontMapLocation = false;
-  bool updateBackMapLocation = false;
+  bool _updateFrontMap = false;
+  bool _updateBackMap = false;
 
-  double _opacity = halfOpacity;
-  LatLng _frontPlaceLocation = sydneyLocation;
-  LatLng _backPlaceLocation = barcelonaLocation;
-  String _frontPlaceName = sydneyName;
-  String _backPlaceName = barcelonaName;
+  double _opacity = initialOpacity;
+  LatLng _frontPlaceLocation = barcelonaLocation;
+  LatLng _backPlaceLocation = sydneyLocation;
+  String _frontPlaceName = barcelonaName;
+  String _backPlaceName = sydneyName;
+  Color _frontPlaceBoundaryColor = colorRed;
+  Color _backPlaceBoundaryColor = colorBlue;
 
+  bool get updateFrontMap => _updateFrontMap;
+  bool get updateBackMap => _updateBackMap;
   double get opacity => _opacity;
   LatLng get frontPlaceLocation => _frontPlaceLocation;
   LatLng get backPlaceLocation => _backPlaceLocation;
   String get frontPlaceName => _frontPlaceName;
   String get backPlaceName => _backPlaceName;
+  Color get frontPlaceBoundaryColor => _frontPlaceBoundaryColor;
+  Color get backPlaceBoundaryColor => _backPlaceBoundaryColor;
+
+  resetUpdateFrontMap() {
+    _updateFrontMap = false;
+  }
+
+  resetUpdateBackMap() {
+    _updateBackMap = false;
+  }
 
   set opacity(double opacity) {
     _opacity = opacity;
@@ -34,11 +53,13 @@ class StackedMapsModel extends ChangeNotifier {
 
   set frontPlaceLocation(LatLng location) {
     _frontPlaceLocation = location;
+    _updateFrontMap = true;
     notifyListeners();
   }
 
   set backPlaceLocation(LatLng location) {
     _backPlaceLocation = location;
+    _updateBackMap = true;
     notifyListeners();
   }
 
@@ -49,6 +70,16 @@ class StackedMapsModel extends ChangeNotifier {
 
   set backPlaceName(String name) {
     _backPlaceName = name;
+    notifyListeners();
+  }
+
+  set frontPlaceBoundaryColor(Color color) {
+    _frontPlaceBoundaryColor = color;
+    notifyListeners();
+  }
+
+  set backPlaceBoundaryColor(Color color) {
+    _backPlaceBoundaryColor = color;
     notifyListeners();
   }
 }
