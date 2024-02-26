@@ -41,6 +41,9 @@ jobs:
     - name: Install dependencies
       run: flutter pub get
       
+    - name: Setup upterm session
+      uses: lhotari/action-upterm@v1
+      
     - name: Build AAB
       run: flutter build appbundle --release --dart-define=MAPS_API_KEY=${{ secrets.MAPS_API_KEY }}
       
