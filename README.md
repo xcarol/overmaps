@@ -72,5 +72,6 @@ Links to follow:
 <https://docs.flutter.dev/deployment/android>  
 <https://developer.android.com/studio/publish/app-signing#enroll_new>  
 <https://play.google.com/console>  
+<https://github.com/marketplace/actions/upload-android-release-to-play-store>
 
 The keystore (and password) used for the app signing is at the Bitwarden vault. These are the same used in the _key.properties_ file.  
