@@ -2,8 +2,7 @@ name: Build and Publish AAB to Google Play Store
 on:
   push:
     branches:
-      - master
-
+      - feature/automate-app-publish
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -11,7 +10,29 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-      
+    - name: Create secrets.properties
+      shell: bash
+      env: 
+        MAPS_API_KEY: ${{ secrets.MAPS_API_KEY }}
+      run: |
+        echo "MAPS_API_KEY=$MAPS_API_KEY" > android/secrets.properties
+    - name: Create upload keystore
+      shell: bash
+      env: 
+        KEY_STORE: ${{ secrets.KEY_STORE }}
+      run: |
+        echo "$KEY_STORE" | base64 -d > android/upload-keystore.jks
+    - name: Create key.properties
+      shell: bash
+      env: 
+        STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+        KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+      run: |
+        echo "storePassword=$STORE_PASSWORD" > android/key.properties
+        echo "keyPassword==$KEY_PASSWORD" >> android/key.properties
+        echo "keyAlias=upload" >> android/key.properties
+        echo "storeFile=../upload-keystore.jks" >> android/key.properties
+  
     - name: Set up Flutter
       uses: subosito/flutter-action@v2
         
@@ -19,12 +40,12 @@ jobs:
       run: flutter pub get
       
     - name: Build AAB
-      run: flutter build appbundle --release
+      run: flutter build appbundle --release --dart-define=MAPS_API_KEY=${{ secrets.MAPS_API_KEY }}
       
     - name: Publish AAB to Google Play Store
       uses: r0adkll/upload-google-play@v1
       with:
-        serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
+        serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_JSON }}
         packageName: com.xicra.overmap
         track: internal
         releaseFiles: build/app/outputs/bundle/release/app-release.aab
