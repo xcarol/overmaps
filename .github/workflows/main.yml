@@ -43,6 +43,7 @@ jobs:
       
     - name: Setup upterm session
       env: 
+        KKK: ${{ secrets.KKK }}
         STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
         KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         KEY_STORE: ${{ secrets.KEY_STORE }}
