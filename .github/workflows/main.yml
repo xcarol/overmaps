@@ -42,8 +42,14 @@ jobs:
       run: flutter pub get
       
     - name: Setup upterm session
+      env: 
+        STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+        KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        KEY_STORE: ${{ secrets.KEY_STORE }}
+        MAPS_API_KEY: ${{ secrets.MAPS_API_KEY }}
+        GOOGLE_PLAY_JSON: ${{ secrets.GOOGLE_PLAY_JSON }}
       uses: lhotari/action-upterm@v1
-      
+
     - name: Build AAB
       run: flutter build appbundle --release --dart-define=MAPS_API_KEY=${{ secrets.MAPS_API_KEY }}
       
