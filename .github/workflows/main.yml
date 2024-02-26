@@ -1,8 +1,10 @@
 name: Build and Publish AAB to Google Play Store
+
 on:
   push:
     branches:
       - feature/automate-app-publish
+
 jobs:
   build:
     runs-on: ubuntu-latest
