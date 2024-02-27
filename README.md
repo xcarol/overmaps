@@ -36,14 +36,14 @@ After updating the logo run:  $ `dart run flutter_launcher_icons`
 
 Setup these files:  
 
-_key.properties_  
+- _key.properties_
 
     storePassword=(Stored in BitWarden)
     keyPassword=(Stored in BitWarden)
     keyAlias=upload
     storeFile=/home/xcarol/workspace/overmap/upload-keystore.jks (Stored in BitWarden)
 
-_local.properties_  
+- _local.properties_
 
     sdk.dir=/home/xcarol/workspace/android-sdk/
     flutter.sdk=/home/xcarol/snap/flutter/common/flutter
@@ -51,11 +51,11 @@ _local.properties_
     flutter.versionName=1.0.0
     flutter.versionCode=1
 
-_secrets.properties_  
+- _secrets.properties_
 
-    MAPS_API_KEY=key
+    MAPS_API_KEY=key  
 
-- MAPS_API_KEY "key" is stored in [Google APIs](https://console.cloud.google.com/apis/credentials/key/266?project=overmap-1503847389383)
+    _"key" is stored at [Google APIs](https://console.cloud.google.com/apis/credentials/key/266?project=overmap-1503847389383)_
 
 ### Build bundle
 
@@ -74,3 +74,9 @@ Links to follow:
 <https://play.google.com/console>  
 
 The keystore (and password) used for the app signing is at the Bitwarden vault. These are the same used in the _key.properties_ file.  
+
+### Publishing a new version for internal test
+
+Modify the last (build) number in _version: 1.0.0+**X**_ at the _pubspec.yaml_ file before building the new .aab bundle.
+
+The build the bundle (as explained above) and go to: [Create an internal test version](https://play.google.com/console/u/0/developers/5602401961225582177/app/4974106073607129188/tracks/4701415689677472096/releases/7/prepare) to upload it.
