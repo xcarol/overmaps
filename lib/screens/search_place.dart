@@ -32,19 +32,10 @@ class _SearchPlaceState extends State<SearchPlace> {
     );
   }
 
-  selectPlace(place) {
-    _service.getPlaceDetails(place['place_id']).then((response) {
-      String status = response[PlacesService.response.status];
-
-      if (status == PlacesService.response.ok) {
-        Map<String, dynamic> placeData =
-            response[PlacesService.response.result];
-
-        Place placeDetails = Place(details: placeData);
-
-        widget.selectedPlace(placeDetails);
-      }
-    });
+  selectPlace(Place place) {
+    // _service.getPlaceDetails(place.placeId).then((response) {
+        widget.selectedPlace(place);
+    // });
   }
 
   void setPlacesListItems(places) {
@@ -55,7 +46,7 @@ class _SearchPlaceState extends State<SearchPlace> {
 
   void inputChanged(String value) async {
     final places = await _service.searchPlaces(value);
-    setPlacesListItems(places['predictions']);
+    setPlacesListItems(places);
   }
 
   placesEditBox() {
@@ -83,9 +74,10 @@ class _SearchPlaceState extends State<SearchPlace> {
         itemBuilder: (context, index) {
           var place = placesListItems.elementAt(index);
           return ListTile(
-            title: Text(place['description']),
+            // title: Text(place['description']),
+            title: Text(place['display_name']),
             onTap: () {
-              selectPlace(place);
+              selectPlace(Place(place));
             },
           );
         },

@@ -63,13 +63,8 @@ class _HomeState extends State<Home> {
   }
 
   void setFrontPlace(Place place, Color boundaryColor) {
-    double latitude = place.lat;
-    double longitude = place.lng;
-    String name = place.name;
-
-    Provider.of<StackedMapsModel>(context, listen: false).frontPlaceLocation =
-        LatLng(latitude, longitude);
-    Provider.of<StackedMapsModel>(context, listen: false).frontPlaceName = name;
+    Provider.of<StackedMapsModel>(context, listen: false).frontPlaceLocation = LatLng(place.lat, place.lng);
+    Provider.of<StackedMapsModel>(context, listen: false).frontPlace = place;
     Provider.of<StackedMapsModel>(context, listen: false).frontPlaceBoundaryColor = boundaryColor;
   }
 

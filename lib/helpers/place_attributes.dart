@@ -1,19 +1,14 @@
-class PlaceLocation {
-  double lat = 0.0;
-  double lng = 0.0;
-}
-
 class PlaceAttributes {
   static const literals = (
     lat: 'lat',
-    lng: 'lng',
+    lon: 'lon',
     name: 'name',
-    geometry: 'geometry',
-    location: 'location',
-    placeId: 'place_id',
+    type: 'osm_type',
+    id: 'osm_id',
   );
 
-  String id = '';
   String name = '';
-  PlaceLocation location = PlaceLocation();
+  double lat = 0.0;
+  double lon = 0.0;
+  String placeId = '';
 }

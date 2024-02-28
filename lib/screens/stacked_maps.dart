@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:overmap/models/place.dart';
 import 'package:overmap/services/places_service.dart';
 import 'package:overmap/widgets/over_map.dart';
 import 'package:overmap/models/stacked_maps_model.dart';
@@ -116,35 +117,40 @@ class _StackedMapsState extends State<StackedMaps> {
   }
 
   void setFrontMapBoundary(StackedMapsModel map) async {
-    var value = await getMapBoundary(map.frontPlaceName, map.frontPlaceLocation,
-        StackedMapsModel.frontPlacePolylineId, map.frontPlaceBoundaryColor);
+    var value = await getMapBoundary(
+      map.frontPlace,
+      StackedMapsModel.frontPlacePolylineId,
+      map.frontPlaceBoundaryColor,
+    );
     setState(() {
       _frontPlacePolyline = value;
     });
   }
 
   void setBackMapBoundary(StackedMapsModel map) async {
-    var value = await getMapBoundary(map.backPlaceName, map.backPlaceLocation,
-        StackedMapsModel.backPlacePolylineId, map.backPlaceBoundaryColor);
+    var value = await getMapBoundary(
+      map.backPlace,
+      StackedMapsModel.backPlacePolylineId,
+      map.backPlaceBoundaryColor,
+    );
     setState(() {
       _backPlacePolyline = value;
     });
   }
 
   Future<Set<Polyline>> getMapBoundary(
-      String place, LatLng coordinates, PolylineId polylineId, Color boundaryColor) async {
+      Place place, PolylineId polylineId, Color boundaryColor) async {
     PlacesService placesService = PlacesService(
         googleMapsApiKey: const String.fromEnvironment("MAPS_API_KEY"));
 
-    List<String> polygons = await placesService.getPlaceBoundaryPolygons(
-        place, coordinates.latitude, coordinates.longitude);
+    List<String> polygons = await placesService.getPlaceBoundaryPolygons(place);
 
     return Future(() => getBoundaries(polygons, boundaryColor));
   }
 
   Set<Polyline> getBoundaries(List<String> polygons, Color boundaryColor) {
     Set<Polyline> boundaries = {};
-    
+
     for (String polygon in polygons) {
       List<LatLng> polylinePoints = List.empty(growable: true);
       List<String> coordinates = polygon.split(' ');
@@ -152,7 +158,8 @@ class _StackedMapsState extends State<StackedMaps> {
       for (String coordinatePair in coordinates) {
         List<String> latLng = coordinatePair.split(',');
         if (latLng.length == 2) {
-          polylinePoints.add(LatLng(double.parse(latLng[1]), double.parse(latLng[0])));
+          polylinePoints
+              .add(LatLng(double.parse(latLng[1]), double.parse(latLng[0])));
         }
       }
 
@@ -164,7 +171,7 @@ class _StackedMapsState extends State<StackedMaps> {
             color: boundaryColor));
       }
     }
-    
+
     return boundaries;
   }
 
