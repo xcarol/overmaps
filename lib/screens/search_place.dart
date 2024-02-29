@@ -12,9 +12,8 @@ class SearchPlace extends StatefulWidget {
 }
 
 class _SearchPlaceState extends State<SearchPlace> {
-  final PlacesService _service = PlacesService(
-      googleMapsApiKey: const String.fromEnvironment("MAPS_API_KEY"));
-  late List placesListItems = List.empty();
+  final PlacesService _service = PlacesService();
+  late List placesList = List.empty();
 
   @override
   Widget build(BuildContext context) {
@@ -32,30 +31,15 @@ class _SearchPlaceState extends State<SearchPlace> {
     );
   }
 
-  selectPlace(place) {
-    _service.getPlaceDetails(place['place_id']).then((response) {
-      String status = response[PlacesService.response.status];
-
-      if (status == PlacesService.response.ok) {
-        Map<String, dynamic> placeData =
-            response[PlacesService.response.result];
-
-        Place placeDetails = Place(details: placeData);
-
-        widget.selectedPlace(placeDetails);
-      }
-    });
-  }
-
   void setPlacesListItems(places) {
     setState(() {
-      placesListItems = places;
+      placesList = places;
     });
   }
 
   void inputChanged(String value) async {
     final places = await _service.searchPlaces(value);
-    setPlacesListItems(places['predictions']);
+    setPlacesListItems(places);
   }
 
   placesEditBox() {
@@ -79,13 +63,13 @@ class _SearchPlaceState extends State<SearchPlace> {
   placesListBox() {
     return Expanded(
       child: ListView.builder(
-        itemCount: placesListItems.length,
+        itemCount: placesList.length,
         itemBuilder: (context, index) {
-          var place = placesListItems.elementAt(index);
+          var place = placesList.elementAt(index);
           return ListTile(
-            title: Text(place['description']),
+            title: Text(place['display_name']),
             onTap: () {
-              selectPlace(place);
+              widget.selectedPlace(Place(place));
             },
           );
         },

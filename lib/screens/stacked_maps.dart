@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:overmap/models/place.dart';
 import 'package:overmap/services/places_service.dart';
 import 'package:overmap/widgets/over_map.dart';
 import 'package:overmap/models/stacked_maps_model.dart';
@@ -27,7 +28,7 @@ class _StackedMapsState extends State<StackedMaps> {
       CameraPosition(target: StackedMapsModel.sydneyLocation);
 
   frontMap(StackedMapsModel map) => OverMap(
-      place: map.frontPlaceName,
+      place: map.frontPlace.name,
       coordinates: _frontCameraPosition.target,
       boundaries: _frontPlacePolyline ??
           {Polyline(polylineId: StackedMapsModel.frontPlacePolylineId)},
@@ -35,7 +36,7 @@ class _StackedMapsState extends State<StackedMaps> {
       onCameraMove: frontCameraMove());
 
   backMap(StackedMapsModel map) => OverMap(
-      place: map.backPlaceName,
+      place: map.backPlace.name,
       coordinates: _backCameraPosition.target,
       boundaries: _backPlacePolyline ??
           {Polyline(polylineId: StackedMapsModel.backPlacePolylineId)},
@@ -116,35 +117,44 @@ class _StackedMapsState extends State<StackedMaps> {
   }
 
   void setFrontMapBoundary(StackedMapsModel map) async {
-    var value = await getMapBoundary(map.frontPlaceName, map.frontPlaceLocation,
-        StackedMapsModel.frontPlacePolylineId, map.frontPlaceBoundaryColor);
+    var value = await getMapBoundary(
+      map.frontPlace,
+      StackedMapsModel.frontPlacePolylineId,
+      map.frontPlaceBoundaryColor,
+    );
     setState(() {
       _frontPlacePolyline = value;
     });
   }
 
   void setBackMapBoundary(StackedMapsModel map) async {
-    var value = await getMapBoundary(map.backPlaceName, map.backPlaceLocation,
-        StackedMapsModel.backPlacePolylineId, map.backPlaceBoundaryColor);
+    var value = await getMapBoundary(
+      map.backPlace,
+      StackedMapsModel.backPlacePolylineId,
+      map.backPlaceBoundaryColor,
+    );
     setState(() {
       _backPlacePolyline = value;
     });
   }
 
   Future<Set<Polyline>> getMapBoundary(
-      String place, LatLng coordinates, PolylineId polylineId, Color boundaryColor) async {
-    PlacesService placesService = PlacesService(
-        googleMapsApiKey: const String.fromEnvironment("MAPS_API_KEY"));
+    Place place,
+    PolylineId polylineId,
+    Color boundaryColor,
+  ) async {
+    PlacesService placesService = PlacesService();
 
-    List<String> polygons = await placesService.getPlaceBoundaryPolygons(
-        place, coordinates.latitude, coordinates.longitude);
-
+    List<String> polygons = await placesService.getPlaceBoundaryPolygons(place);
     return Future(() => getBoundaries(polygons, boundaryColor));
   }
 
-  Set<Polyline> getBoundaries(List<String> polygons, Color boundaryColor) {
+  Set<Polyline> getBoundaries(
+    List<String> polygons,
+    Color boundaryColor,
+  ) {
     Set<Polyline> boundaries = {};
-    
+
     for (String polygon in polygons) {
       List<LatLng> polylinePoints = List.empty(growable: true);
       List<String> coordinates = polygon.split(' ');
@@ -152,7 +162,8 @@ class _StackedMapsState extends State<StackedMaps> {
       for (String coordinatePair in coordinates) {
         List<String> latLng = coordinatePair.split(',');
         if (latLng.length == 2) {
-          polylinePoints.add(LatLng(double.parse(latLng[1]), double.parse(latLng[0])));
+          polylinePoints
+              .add(LatLng(double.parse(latLng[1]), double.parse(latLng[0])));
         }
       }
 
@@ -164,8 +175,32 @@ class _StackedMapsState extends State<StackedMaps> {
             color: boundaryColor));
       }
     }
-    
+
     return boundaries;
+  }
+
+  void updateBackMap(StackedMapsModel map) {
+    _backCameraPosition = updateCameraLocation(
+      _backCameraPosition,
+      LatLng(map.backPlace.lat, map.backPlace.lng),
+    );
+
+    updateMap(_backController, _backCameraPosition);
+    setBackMapBoundary(map);
+
+    map.resetUpdateBackMap();
+  }
+
+  void updateFrontMap(StackedMapsModel map) {
+    _frontCameraPosition = updateCameraLocation(
+      _frontCameraPosition,
+      LatLng(map.frontPlace.lat, map.frontPlace.lng),
+    );
+
+    updateMap(_frontController, _frontCameraPosition);
+    setFrontMapBoundary(map);
+
+    map.resetUpdateFrontMap();
   }
 
   @override
@@ -183,28 +218,21 @@ class _StackedMapsState extends State<StackedMaps> {
       }
 
       if (map.updateFrontMap) {
-        _frontCameraPosition =
-            updateCameraLocation(_frontCameraPosition, map.frontPlaceLocation);
-
-        updateMap(_frontController, _frontCameraPosition);
-        setFrontMapBoundary(map);
-
-        map.resetUpdateFrontMap();
+        updateFrontMap(map);
       }
 
       if (map.updateBackMap) {
-        _backCameraPosition =
-            updateCameraLocation(_backCameraPosition, map.backPlaceLocation);
-
-        updateMap(_backController, _backCameraPosition);
-        setBackMapBoundary(map);
-
-        map.resetUpdateBackMap();
+        updateBackMap(map);
       }
 
       _opacity = map.opacity;
 
-      return Stack(children: stackedMaps(frontMap(map), backMap(map)));
+      return Stack(
+        children: stackedMaps(
+          frontMap(map),
+          backMap(map),
+        ),
+      );
     });
   }
 }

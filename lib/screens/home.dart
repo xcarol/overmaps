@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:overmap/models/place.dart';
 import 'package:overmap/models/stacked_maps_model.dart';
 import 'package:overmap/screens/search_place.dart';
@@ -52,28 +51,20 @@ class _HomeState extends State<Home> {
       onChanged: sliderMoved);
 
   void setBackPlace(Place place, Color boundaryColor) {
-    double latitude = place.lat;
-    double longitude = place.lng;
-    String name = place.name;
-
-    Provider.of<StackedMapsModel>(context, listen: false).backPlaceLocation =
-        LatLng(latitude, longitude);
-    Provider.of<StackedMapsModel>(context, listen: false).backPlaceName = name;
-    Provider.of<StackedMapsModel>(context, listen: false).backPlaceBoundaryColor = boundaryColor;
+    Provider.of<StackedMapsModel>(context, listen: false).updateBackMap = true;
+    Provider.of<StackedMapsModel>(context, listen: false).backPlace = place;
+    Provider.of<StackedMapsModel>(context, listen: false)
+        .backPlaceBoundaryColor = boundaryColor;
   }
 
   void setFrontPlace(Place place, Color boundaryColor) {
-    double latitude = place.lat;
-    double longitude = place.lng;
-    String name = place.name;
-
-    Provider.of<StackedMapsModel>(context, listen: false).frontPlaceLocation =
-        LatLng(latitude, longitude);
-    Provider.of<StackedMapsModel>(context, listen: false).frontPlaceName = name;
-    Provider.of<StackedMapsModel>(context, listen: false).frontPlaceBoundaryColor = boundaryColor;
+    Provider.of<StackedMapsModel>(context, listen: false).updateFrontMap = true;
+    Provider.of<StackedMapsModel>(context, listen: false).frontPlace = place;
+    Provider.of<StackedMapsModel>(context, listen: false)
+        .frontPlaceBoundaryColor = boundaryColor;
   }
 
-  searchPlace(Function selectedPlace) {
+  searchPlaceScreen(Function selectedPlace) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -82,7 +73,7 @@ class _HomeState extends State<Home> {
   }
 
   searchLeftPlace() {
-    searchPlace((Place place) {
+    searchPlaceScreen((Place place) {
       setState(() {
         if (isLeftPlaceInFront) {
           setFrontPlace(place, _leftBoundaryColor);
@@ -96,7 +87,7 @@ class _HomeState extends State<Home> {
   }
 
   searchRightPlace() {
-    searchPlace((Place place) {
+    searchPlaceScreen((Place place) {
       setState(() {
         if (isRightPlaceInFront) {
           setFrontPlace(place, _rightBoundaryColor);
