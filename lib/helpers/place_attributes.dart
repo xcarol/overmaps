@@ -1,19 +1,19 @@
-class PlaceLocation {
-  double lat = 0.0;
-  double lng = 0.0;
-}
+// This class is based on Nomatim attributes documentation
+// https://nominatim.org/release-docs/develop/api/Overview/
 
 class PlaceAttributes {
   static const literals = (
-    lat: 'lat',
-    lng: 'lng',
+    latitude: 'lat',
+    longitude: 'lon',
     name: 'name',
-    geometry: 'geometry',
-    location: 'location',
-    placeId: 'place_id',
+    id: 'osm_id',
+    type: 'osm_type',
   );
 
-  String id = '';
   String name = '';
-  PlaceLocation location = PlaceLocation();
+  double latitude = 0.0;
+  double longitude = 0.0;
+  String placeId = '';
+  String osmId = '';
+  String osmType = '';
 }
