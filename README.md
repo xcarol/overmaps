@@ -38,18 +38,18 @@ Setup these files:
 
 - _key.properties_
 
-    storePassword=(Stored in BitWarden)
-    keyPassword=(Stored in BitWarden)
-    keyAlias=upload
-    storeFile=/home/xcarol/workspace/overmap/upload-keystore.jks (Stored in BitWarden)
+    storePassword=(Stored in BitWarden)  
+    keyPassword=(Stored in BitWarden)  
+    keyAlias=upload  
+    storeFile=/home/xcarol/workspace/overmap/upload-keystore.jks (Stored in BitWarden)  
 
 - _local.properties_
 
-    sdk.dir=/home/xcarol/workspace/android-sdk/
-    flutter.sdk=/home/xcarol/snap/flutter/common/flutter
-    flutter.buildMode=release
-    flutter.versionName=1.0.0
-    flutter.versionCode=1
+    sdk.dir=/home/xcarol/workspace/android-sdk/  
+    flutter.sdk=/home/xcarol/snap/flutter/common/flutter  
+    flutter.buildMode=release  
+    flutter.versionName=1.0.0  
+    flutter.versionCode=1  
 
 - _secrets.properties_
 
