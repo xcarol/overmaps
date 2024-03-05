@@ -52,6 +52,11 @@ class _OverMapState extends State<OverMap> {
         onCameraMove: _onCameraMove,
         zoomControlsEnabled: false,
         polylines: widget.boundaries,
+        style: '['
+        '  {"featureType": "poi","stylers": [{"visibility": "off"}]},'
+        '  {"featureType": "road","elementType": "labels.icon","stylers": [{"visibility": "off"}]},'
+        '  {"featureType": "transit","stylers": [{"visibility": "off"}]}'
+        ']',
         initialCameraPosition: CameraPosition(
           target: widget.coordinates,
           zoom: StackedMapsModel.defaultZoom,
@@ -60,11 +65,6 @@ class _OverMapState extends State<OverMap> {
 
   void _onMapCreated(GoogleMapController controller) async {
     _mapController = controller;
-    _mapController.setMapStyle('['
-        '  {"featureType": "poi","stylers": [{"visibility": "off"}]},'
-        '  {"featureType": "road","elementType": "labels.icon","stylers": [{"visibility": "off"}]},'
-        '  {"featureType": "transit","stylers": [{"visibility": "off"}]}'
-        ']');
     widget.onMapCreated(_mapController);
   }
 
