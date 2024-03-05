@@ -1,4 +1,4 @@
-import 'package:overmap/helpers/place_attributes.dart';
+import 'package:overmaps/helpers/place_attributes.dart';
 
 // This class is based on Nomatim
 // https://nominatim.org/release-docs/develop/api/Overview/

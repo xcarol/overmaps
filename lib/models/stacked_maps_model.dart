@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:overmap/models/place.dart';
+import 'package:overmaps/models/place.dart';
 
 class StackedMapsModel extends ChangeNotifier {
   static LatLng barcelonaLocation = const LatLng(41.3828939, 2.1774322);

@@ -2,7 +2,7 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:overmap/models/stacked_maps_model.dart';
+import 'package:overmaps/models/stacked_maps_model.dart';
 
 class OverMap extends StatefulWidget {
   final String place;

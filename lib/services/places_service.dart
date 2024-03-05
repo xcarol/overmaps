@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:overmap/models/place.dart';
+import 'package:overmaps/models/place.dart';
 import 'package:xml/xml.dart';
 import 'package:http/http.dart' as http;
 

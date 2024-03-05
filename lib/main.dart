@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:overmap/screens/home.dart';
-import 'package:overmap/models/stacked_maps_model.dart';
+import 'package:overmaps/screens/home.dart';
+import 'package:overmaps/models/stacked_maps_model.dart';
 import 'package:provider/provider.dart';
 
 void main() => runApp(ChangeNotifierProvider(

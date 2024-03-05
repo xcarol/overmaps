@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:overmap/models/place.dart';
-import 'package:overmap/services/places_service.dart';
-import 'package:overmap/widgets/over_map.dart';
-import 'package:overmap/models/stacked_maps_model.dart';
+import 'package:overmaps/models/place.dart';
+import 'package:overmaps/services/places_service.dart';
+import 'package:overmaps/widgets/over_map.dart';
+import 'package:overmaps/models/stacked_maps_model.dart';
 import 'package:provider/provider.dart';
 
 class StackedMaps extends StatefulWidget {
@@ -33,19 +33,19 @@ class _StackedMapsState extends State<StackedMaps> {
   );
 
   frontMap(StackedMapsModel map) => OverMap(
-      place: map.frontPlace.name,
-      coordinates: _frontCameraPosition.target,
-      boundaries: _frontPlacePolyline,
-      markers: _frontPlaceMarker,
+        place: map.frontPlace.name,
+        coordinates: _frontCameraPosition.target,
+        boundaries: _frontPlacePolyline,
+        markers: _frontPlaceMarker,
         onMapCreated: frontMapCreated,
         onCameraMove: frontCameraMove,
       );
 
   backMap(StackedMapsModel map) => OverMap(
-      place: map.backPlace.name,
-      coordinates: _backCameraPosition.target,
-      boundaries: _backPlacePolyline,
-      markers: _backPlaceMarker,
+        place: map.backPlace.name,
+        coordinates: _backCameraPosition.target,
+        boundaries: _backPlacePolyline,
+        markers: _backPlaceMarker,
         onMapCreated: backMapCreated,
         onCameraMove: backCameraMove,
       );
@@ -141,7 +141,7 @@ class _StackedMapsState extends State<StackedMaps> {
   }
 
   void setCameraPosition(
-    GoogleMapController? controller, CameraPosition position) {
+      GoogleMapController? controller, CameraPosition position) {
     OverMap.setCameraPosition(controller, position);
   }
 
@@ -236,35 +236,35 @@ class _StackedMapsState extends State<StackedMaps> {
     map.resetUpdateFrontMap();
   }
 
-    void update(map) {
-      if (_frontPlacePolyline.isEmpty) {
-        setFrontMapBoundary(map);
-      }
-
-      if (_backPlacePolyline.isEmpty) {
-        setBackMapBoundary(map);
-      }
-
-      if (_frontPlaceMarker.isEmpty) {
-        setFrontMapMarker(map);
-      }
-
-      if (_backPlaceMarker.isEmpty) {
-        setBackMapMarker(map);
-      }
-
-      if (needSwitchMaps(map)) {
-        switchMaps();
-      }
-
-      if (map.updateFrontMap) {
-        updateFrontMap(map);
-      }
-
-      if (map.updateBackMap) {
-        updateBackMap(map);
-      }
+  void update(map) {
+    if (_frontPlacePolyline.isEmpty) {
+      setFrontMapBoundary(map);
     }
+
+    if (_backPlacePolyline.isEmpty) {
+      setBackMapBoundary(map);
+    }
+
+    if (_frontPlaceMarker.isEmpty) {
+      setFrontMapMarker(map);
+    }
+
+    if (_backPlaceMarker.isEmpty) {
+      setBackMapMarker(map);
+    }
+
+    if (needSwitchMaps(map)) {
+      switchMaps();
+    }
+
+    if (map.updateFrontMap) {
+      updateFrontMap(map);
+    }
+
+    if (map.updateBackMap) {
+      updateBackMap(map);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
