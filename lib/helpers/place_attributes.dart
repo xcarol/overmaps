@@ -6,8 +6,8 @@ class PlaceAttributes {
     latitude: 'lat',
     longitude: 'lon',
     name: 'name',
-    id: 'osm_id',
-    type: 'osm_type',
+    osmId: 'osm_id',
+    osmType: 'osm_type',
   );
 
   String name = '';
