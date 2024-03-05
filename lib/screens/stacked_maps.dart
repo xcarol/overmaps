@@ -22,6 +22,9 @@ class _StackedMapsState extends State<StackedMaps> {
   Set<Polyline>? _frontPlacePolyline;
   Set<Polyline>? _backPlacePolyline;
 
+  Set<Marker>? _frontPlaceMarker;
+  Set<Marker>? _backPlaceMarker;
+
   late CameraPosition _frontCameraPosition =
       CameraPosition(target: StackedMapsModel.barcelonaLocation);
   late CameraPosition _backCameraPosition =
@@ -32,6 +35,8 @@ class _StackedMapsState extends State<StackedMaps> {
       coordinates: _frontCameraPosition.target,
       boundaries: _frontPlacePolyline ??
           {Polyline(polylineId: StackedMapsModel.frontPlacePolylineId)},
+      markers: _frontPlaceMarker ??
+          {Marker(markerId: StackedMapsModel.frontPlaceMarkerId)},
       onMapCreated: frontMapCreated(),
       onCameraMove: frontCameraMove());
 
@@ -40,6 +45,8 @@ class _StackedMapsState extends State<StackedMaps> {
       coordinates: _backCameraPosition.target,
       boundaries: _backPlacePolyline ??
           {Polyline(polylineId: StackedMapsModel.backPlacePolylineId)},
+      markers: _backPlaceMarker ??
+          {Marker(markerId: StackedMapsModel.backPlaceMarkerId)},
       onMapCreated: backMapCreated(),
       onCameraMove: backCameraMove());
 
@@ -114,6 +121,10 @@ class _StackedMapsState extends State<StackedMaps> {
     Set<Polyline>? copyPlacePolyline = _backPlacePolyline;
     _backPlacePolyline = _frontPlacePolyline;
     _frontPlacePolyline = copyPlacePolyline;
+
+    Set<Marker>? copyPlaceMarker = _backPlaceMarker;
+    _backPlaceMarker = _frontPlaceMarker;
+    _frontPlaceMarker = copyPlaceMarker;
   }
 
   void setFrontMapBoundary(StackedMapsModel map) async {
@@ -136,6 +147,32 @@ class _StackedMapsState extends State<StackedMaps> {
     setState(() {
       _backPlacePolyline = value;
     });
+  }
+
+  void setFrontMapMarker(StackedMapsModel map) async {
+    Future(
+      () => setState(() {
+        _frontPlaceMarker = {
+          Marker(
+            markerId: StackedMapsModel.frontPlaceMarkerId,
+            position: LatLng(map.frontPlace.lat, map.frontPlace.lng),
+          )
+        };
+      }),
+    );
+  }
+
+  void setBackMapMarker(StackedMapsModel map) {
+    Future(
+      () => setState(() {
+        _backPlaceMarker = {
+          Marker(
+            markerId: StackedMapsModel.backPlaceMarkerId,
+            position: LatLng(map.backPlace.lat, map.backPlace.lng),
+          )
+        };
+      }),
+    );
   }
 
   Future<Set<Polyline>> getMapBoundary(
@@ -187,6 +224,7 @@ class _StackedMapsState extends State<StackedMaps> {
 
     updateMap(_backController, _backCameraPosition);
     setBackMapBoundary(map);
+    setBackMapMarker(map);
 
     map.resetUpdateBackMap();
   }
@@ -199,6 +237,7 @@ class _StackedMapsState extends State<StackedMaps> {
 
     updateMap(_frontController, _frontCameraPosition);
     setFrontMapBoundary(map);
+    setFrontMapMarker(map);
 
     map.resetUpdateFrontMap();
   }
@@ -211,6 +250,13 @@ class _StackedMapsState extends State<StackedMaps> {
       }
       if (_backPlacePolyline == null) {
         setBackMapBoundary(map);
+      }
+
+      if (_frontPlaceMarker == null) {
+        setFrontMapMarker(map);
+      }
+      if (_backPlaceMarker == null) {
+        setBackMapMarker(map);
       }
 
       if (needSwitchMaps(map)) {

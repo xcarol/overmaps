@@ -27,6 +27,13 @@ class StackedMapsModel extends ChangeNotifier {
     'backPlacePolylineId',
   );
 
+  static MarkerId frontPlaceMarkerId = const MarkerId(
+      'frontPlaceMarkerId',
+  );
+  static MarkerId backPlaceMarkerId = const MarkerId(
+      'backPlaceMarkerId',
+  );
+
   double _opacity = initialOpacity;
   bool _updateFrontMap = false;
   bool _updateBackMap = false;
