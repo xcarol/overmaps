@@ -78,10 +78,10 @@ class _OverMapState extends State<OverMap> {
 
     // Check first if it's running on a Web Browser
     // because dart:io Platform class is not implemented in this case.
-    if (kIsWeb || Platform.isAndroid == false) {
-      childWidget = unsupportedPlatformWidget;
-    } else {
+    if (kIsWeb || Platform.isAndroid) {
       childWidget = mapWidget();
+    } else {
+      childWidget = unsupportedPlatformWidget;
     }
 
     return childWidget;
