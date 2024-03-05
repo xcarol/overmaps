@@ -8,6 +8,7 @@ class OverMap extends StatefulWidget {
   final String place;
   final LatLng coordinates;
   final Set<Polyline> boundaries;
+  final Set<Marker> markers;
   final Function onCameraMove, onMapCreated;
 
   const OverMap({
@@ -15,6 +16,7 @@ class OverMap extends StatefulWidget {
     required this.place,
     required this.coordinates,
     required this.boundaries,
+    required this.markers,
     required this.onMapCreated,
     required this.onCameraMove,
   });
@@ -52,6 +54,12 @@ class _OverMapState extends State<OverMap> {
         onCameraMove: _onCameraMove,
         zoomControlsEnabled: false,
         polylines: widget.boundaries,
+        markers: widget.markers,
+        style: '['
+            '  {"featureType": "poi","stylers": [{"visibility": "off"}]},'
+            '  {"featureType": "road","elementType": "labels.icon","stylers": [{"visibility": "off"}]},'
+            '  {"featureType": "transit","stylers": [{"visibility": "off"}]}'
+            ']',
         initialCameraPosition: CameraPosition(
           target: widget.coordinates,
           zoom: StackedMapsModel.defaultZoom,
@@ -60,11 +68,6 @@ class _OverMapState extends State<OverMap> {
 
   void _onMapCreated(GoogleMapController controller) async {
     _mapController = controller;
-    _mapController.setMapStyle('['
-        '  {"featureType": "poi","stylers": [{"visibility": "off"}]},'
-        '  {"featureType": "road","elementType": "labels.icon","stylers": [{"visibility": "off"}]},'
-        '  {"featureType": "transit","stylers": [{"visibility": "off"}]}'
-        ']');
     widget.onMapCreated(_mapController);
   }
 
