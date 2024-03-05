@@ -111,7 +111,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Overmap'),
+          title: const Text('Overmaps'),
         ),
         body: const StackedMaps(),
         persistentFooterButtons: [

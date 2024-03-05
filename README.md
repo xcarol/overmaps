@@ -1,4 +1,4 @@
-# Overmap
+# Overmaps
 
 Visually compare locations using Google Maps
 
@@ -41,7 +41,7 @@ Setup these files:
     storePassword=(Stored in BitWarden)  
     keyPassword=(Stored in BitWarden)  
     keyAlias=upload  
-    storeFile=/home/xcarol/workspace/overmap/upload-keystore.jks (Stored in BitWarden)  
+    storeFile=/home/xcarol/workspace/overmaps/upload-keystore.jks (Stored in BitWarden)  
 
 - _local.properties_
 

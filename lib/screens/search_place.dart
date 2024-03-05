@@ -19,7 +19,7 @@ class _SearchPlaceState extends State<SearchPlace> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Overmap'),
+        title: const Text('Overmaps'),
       ),
       body: Column(
         children: <Widget>[
