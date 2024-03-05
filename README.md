@@ -13,7 +13,7 @@ Set in _.vscode/launch.json_
 
     "configurations": [
         {
-          "name": "overmap",
+          "name": "overmaps",
           "request": "launch",
           "type": "dart",
           "toolArgs": [

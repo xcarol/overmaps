@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:overmap/models/place.dart';
-import 'package:overmap/services/places_service.dart';
+import 'package:overmaps/models/place.dart';
+import 'package:overmaps/services/places_service.dart';
 
 class SearchPlace extends StatefulWidget {
   final Function selectedPlace;

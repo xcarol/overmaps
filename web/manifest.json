@@ -1,6 +1,6 @@
 {
-    "name": "overmap",
-    "short_name": "overmap",
+    "name": "overmaps",
+    "short_name": "overmaps",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

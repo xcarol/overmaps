@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:overmap/models/place.dart';
-import 'package:overmap/models/stacked_maps_model.dart';
-import 'package:overmap/screens/search_place.dart';
-import 'package:overmap/screens/stacked_maps.dart';
+import 'package:overmaps/models/place.dart';
+import 'package:overmaps/models/stacked_maps_model.dart';
+import 'package:overmaps/screens/search_place.dart';
+import 'package:overmaps/screens/stacked_maps.dart';
 import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {

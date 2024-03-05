@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:overmap/models/place.dart';
+import 'package:overmaps/models/place.dart';
 
 class StackedMapsModel extends ChangeNotifier {
   static LatLng barcelonaLocation = const LatLng(41.3828939, 2.1774322);
@@ -28,10 +28,10 @@ class StackedMapsModel extends ChangeNotifier {
   );
 
   static MarkerId frontPlaceMarkerId = const MarkerId(
-      'frontPlaceMarkerId',
+    'frontPlaceMarkerId',
   );
   static MarkerId backPlaceMarkerId = const MarkerId(
-      'backPlaceMarkerId',
+    'backPlaceMarkerId',
   );
 
   double _opacity = initialOpacity;
@@ -65,7 +65,10 @@ class StackedMapsModel extends ChangeNotifier {
   set updateFrontMap(bool? anyvalue) {
     _updateFrontMap = true;
   }
-  set updateBackMap(bool? anyvalue) => _updateBackMap = true;
+
+  set updateBackMap(bool? anyvalue) {
+    _updateBackMap = true;
+  }
 
   set opacity(double opacity) {
     _opacity = opacity;

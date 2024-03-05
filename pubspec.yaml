@@ -1,4 +1,4 @@
-name: overmap
+name: overmaps
 description: "Explore two locations concurrently with transparent map overlays."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.

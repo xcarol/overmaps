@@ -2,7 +2,7 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:overmap/models/stacked_maps_model.dart';
+import 'package:overmaps/models/stacked_maps_model.dart';
 
 class OverMap extends StatefulWidget {
   final String place;
@@ -38,20 +38,21 @@ class OverMap extends StatefulWidget {
 }
 
 class _OverMapState extends State<OverMap> {
-  late GoogleMapController _mapController;
-
   Widget get unsupportedPlatformWidget => Center(
-          child: Column(children: [
-        const Text('Android is the only platform currently supported.\n'),
-        const Text('Coordinates\n'),
-        Text('Latitude: ${widget.coordinates.latitude}'),
-        Text('Longitude: ${widget.coordinates.longitude}'),
-      ]));
+        child: Column(
+          children: [
+            const Text(
+                'Android & Web are the only platform currently supported.\n'),
+            const Text('Coordinates\n'),
+            Text('Latitude: ${widget.coordinates.latitude}'),
+            Text('Longitude: ${widget.coordinates.longitude}'),
+          ],
+        ),
+      );
 
-  Widget mapWidget() {
-    return GoogleMap(
-        onMapCreated: _onMapCreated,
-        onCameraMove: _onCameraMove,
+  Widget get mapWidget => GoogleMap(
+        onMapCreated: onMapCreated,
+        onCameraMove: onCameraMove,
         zoomControlsEnabled: false,
         polylines: widget.boundaries,
         markers: widget.markers,
@@ -63,30 +64,25 @@ class _OverMapState extends State<OverMap> {
         initialCameraPosition: CameraPosition(
           target: widget.coordinates,
           zoom: StackedMapsModel.defaultZoom,
-        ));
+        ),
+      );
+
+  void onMapCreated(GoogleMapController controller) async {
+    widget.onMapCreated(controller);
   }
 
-  void _onMapCreated(GoogleMapController controller) async {
-    _mapController = controller;
-    widget.onMapCreated(_mapController);
-  }
-
-  void _onCameraMove(CameraPosition position) {
+  void onCameraMove(CameraPosition position) {
     widget.onCameraMove(position);
   }
 
   @override
   Widget build(BuildContext context) {
-    late Widget childWidget;
-
     // Check first if it's running on a Web Browser
     // because dart:io Platform class is not implemented in this case.
     if (kIsWeb || Platform.isAndroid) {
-      childWidget = mapWidget();
-    } else {
-      childWidget = unsupportedPlatformWidget;
+      return mapWidget;
     }
 
-    return childWidget;
+    return unsupportedPlatformWidget;
   }
 }

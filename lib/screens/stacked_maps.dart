@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:overmap/models/place.dart';
-import 'package:overmap/services/places_service.dart';
-import 'package:overmap/widgets/over_map.dart';
-import 'package:overmap/models/stacked_maps_model.dart';
+import 'package:overmaps/models/place.dart';
+import 'package:overmaps/services/places_service.dart';
+import 'package:overmaps/widgets/over_map.dart';
+import 'package:overmaps/models/stacked_maps_model.dart';
 import 'package:provider/provider.dart';
 
 class StackedMaps extends StatefulWidget {
@@ -19,36 +19,36 @@ class _StackedMapsState extends State<StackedMaps> {
   GoogleMapController? _frontController;
   GoogleMapController? _backController;
 
-  Set<Polyline>? _frontPlacePolyline;
-  Set<Polyline>? _backPlacePolyline;
+  Set<Polyline> _frontPlacePolyline = {};
+  Set<Polyline> _backPlacePolyline = {};
 
-  Set<Marker>? _frontPlaceMarker;
-  Set<Marker>? _backPlaceMarker;
+  Set<Marker> _frontPlaceMarker = {};
+  Set<Marker> _backPlaceMarker = {};
 
-  late CameraPosition _frontCameraPosition =
-      CameraPosition(target: StackedMapsModel.barcelonaLocation);
-  late CameraPosition _backCameraPosition =
-      CameraPosition(target: StackedMapsModel.sydneyLocation);
+  late CameraPosition _frontCameraPosition = CameraPosition(
+    target: StackedMapsModel.barcelonaLocation,
+  );
+  late CameraPosition _backCameraPosition = CameraPosition(
+    target: StackedMapsModel.sydneyLocation,
+  );
 
   frontMap(StackedMapsModel map) => OverMap(
-      place: map.frontPlace.name,
-      coordinates: _frontCameraPosition.target,
-      boundaries: _frontPlacePolyline ??
-          {Polyline(polylineId: StackedMapsModel.frontPlacePolylineId)},
-      markers: _frontPlaceMarker ??
-          {Marker(markerId: StackedMapsModel.frontPlaceMarkerId)},
-      onMapCreated: frontMapCreated(),
-      onCameraMove: frontCameraMove());
+        place: map.frontPlace.name,
+        coordinates: _frontCameraPosition.target,
+        boundaries: _frontPlacePolyline,
+        markers: _frontPlaceMarker,
+        onMapCreated: frontMapCreated,
+        onCameraMove: frontCameraMove,
+      );
 
   backMap(StackedMapsModel map) => OverMap(
-      place: map.backPlace.name,
-      coordinates: _backCameraPosition.target,
-      boundaries: _backPlacePolyline ??
-          {Polyline(polylineId: StackedMapsModel.backPlacePolylineId)},
-      markers: _backPlaceMarker ??
-          {Marker(markerId: StackedMapsModel.backPlaceMarkerId)},
-      onMapCreated: backMapCreated(),
-      onCameraMove: backCameraMove());
+        place: map.backPlace.name,
+        coordinates: _backCameraPosition.target,
+        boundaries: _backPlacePolyline,
+        markers: _backPlaceMarker,
+        onMapCreated: backMapCreated,
+        onCameraMove: backCameraMove,
+      );
 
   double get frontMapOpacity => (_opacity > StackedMapsModel.halfOpacity
       ? _opacity
@@ -56,7 +56,7 @@ class _StackedMapsState extends State<StackedMaps> {
 
   stackedMaps(frontMap, backMap) => [
         Opacity(opacity: StackedMapsModel.opaque, child: backMap),
-        Opacity(opacity: frontMapOpacity, child: frontMap)
+        Opacity(opacity: frontMapOpacity, child: frontMap),
       ];
 
   bool needSwitchMaps(StackedMapsModel map) {
@@ -66,7 +66,7 @@ class _StackedMapsState extends State<StackedMaps> {
             map.opacity > StackedMapsModel.halfOpacity);
   }
 
-  backMapCreated() {
+  Function get backMapCreated {
     return (GoogleMapController controller) {
       setState(() {
         _backController = controller;
@@ -74,13 +74,13 @@ class _StackedMapsState extends State<StackedMaps> {
     };
   }
 
-  backCameraMove() {
+  Function get backCameraMove {
     return (CameraPosition position) {
       _backCameraPosition = position;
     };
   }
 
-  frontMapCreated() {
+  Function get frontMapCreated {
     return (GoogleMapController controller) {
       setState(() {
         _frontController = controller;
@@ -88,91 +88,11 @@ class _StackedMapsState extends State<StackedMaps> {
     };
   }
 
-  frontCameraMove() {
+  Function get frontCameraMove {
     return (CameraPosition position) {
       _frontCameraPosition = position;
       OverMap.zoom(_backController, position);
     };
-  }
-
-  CameraPosition updateCameraLocation(
-    CameraPosition cameraPosition,
-    LatLng location,
-  ) {
-    return CameraPosition(
-        target: location,
-        bearing: cameraPosition.bearing,
-        tilt: cameraPosition.tilt,
-        zoom: cameraPosition.zoom);
-  }
-
-  updateMap(GoogleMapController? controller, CameraPosition position) {
-    OverMap.setCameraPosition(controller, position);
-  }
-
-  switchMaps() {
-    CameraPosition copyCameraPosition = _frontCameraPosition;
-    _frontCameraPosition = _backCameraPosition;
-    _backCameraPosition = copyCameraPosition;
-
-    OverMap.setCameraPosition(_frontController, _frontCameraPosition);
-    OverMap.setCameraPosition(_backController, _backCameraPosition);
-
-    Set<Polyline>? copyPlacePolyline = _backPlacePolyline;
-    _backPlacePolyline = _frontPlacePolyline;
-    _frontPlacePolyline = copyPlacePolyline;
-
-    Set<Marker>? copyPlaceMarker = _backPlaceMarker;
-    _backPlaceMarker = _frontPlaceMarker;
-    _frontPlaceMarker = copyPlaceMarker;
-  }
-
-  void setFrontMapBoundary(StackedMapsModel map) async {
-    var value = await getMapBoundary(
-      map.frontPlace,
-      StackedMapsModel.frontPlacePolylineId,
-      map.frontPlaceBoundaryColor,
-    );
-    setState(() {
-      _frontPlacePolyline = value;
-    });
-  }
-
-  void setBackMapBoundary(StackedMapsModel map) async {
-    var value = await getMapBoundary(
-      map.backPlace,
-      StackedMapsModel.backPlacePolylineId,
-      map.backPlaceBoundaryColor,
-    );
-    setState(() {
-      _backPlacePolyline = value;
-    });
-  }
-
-  void setFrontMapMarker(StackedMapsModel map) async {
-    Future(
-      () => setState(() {
-        _frontPlaceMarker = {
-          Marker(
-            markerId: StackedMapsModel.frontPlaceMarkerId,
-            position: LatLng(map.frontPlace.lat, map.frontPlace.lng),
-          )
-        };
-      }),
-    );
-  }
-
-  void setBackMapMarker(StackedMapsModel map) {
-    Future(
-      () => setState(() {
-        _backPlaceMarker = {
-          Marker(
-            markerId: StackedMapsModel.backPlaceMarkerId,
-            position: LatLng(map.backPlace.lat, map.backPlace.lng),
-          )
-        };
-      }),
-    );
   }
 
   Future<Set<Polyline>> getMapBoundary(
@@ -183,13 +103,6 @@ class _StackedMapsState extends State<StackedMaps> {
     PlacesService placesService = PlacesService();
 
     List<String> polygons = await placesService.getPlaceBoundaryPolygons(place);
-    return Future(() => getBoundaries(polygons, boundaryColor));
-  }
-
-  Set<Polyline> getBoundaries(
-    List<String> polygons,
-    Color boundaryColor,
-  ) {
     Set<Polyline> boundaries = {};
 
     for (String polygon in polygons) {
@@ -216,13 +129,94 @@ class _StackedMapsState extends State<StackedMaps> {
     return boundaries;
   }
 
+  CameraPosition updateCameraLocation(
+    CameraPosition cameraPosition,
+    LatLng location,
+  ) {
+    return CameraPosition(
+        target: location,
+        bearing: cameraPosition.bearing,
+        tilt: cameraPosition.tilt,
+        zoom: cameraPosition.zoom);
+  }
+
+  void setCameraPosition(
+      GoogleMapController? controller, CameraPosition position) {
+    OverMap.setCameraPosition(controller, position);
+  }
+
+  void switchMaps() {
+    CameraPosition copyCameraPosition = _frontCameraPosition;
+    _frontCameraPosition = _backCameraPosition;
+    _backCameraPosition = copyCameraPosition;
+
+    OverMap.setCameraPosition(_frontController, _frontCameraPosition);
+    OverMap.setCameraPosition(_backController, _backCameraPosition);
+
+    Set<Polyline>? copyPlacePolyline = _backPlacePolyline;
+    _backPlacePolyline = _frontPlacePolyline;
+    _frontPlacePolyline = copyPlacePolyline;
+
+    Set<Marker>? copyPlaceMarker = _backPlaceMarker;
+    _backPlaceMarker = _frontPlaceMarker;
+    _frontPlaceMarker = copyPlaceMarker;
+  }
+
+  void setFrontMapBoundary(StackedMapsModel map) async {
+    Set<Polyline> boundary = await getMapBoundary(
+      map.frontPlace,
+      StackedMapsModel.frontPlacePolylineId,
+      map.frontPlaceBoundaryColor,
+    );
+    setState(() {
+      _frontPlacePolyline = boundary;
+    });
+  }
+
+  void setBackMapBoundary(StackedMapsModel map) async {
+    Set<Polyline> boundary = await getMapBoundary(
+      map.backPlace,
+      StackedMapsModel.backPlacePolylineId,
+      map.backPlaceBoundaryColor,
+    );
+    setState(() {
+      _backPlacePolyline = boundary;
+    });
+  }
+
+  void setFrontMapMarker(StackedMapsModel map) async {
+    Future(
+      () => setState(() {
+        _frontPlaceMarker = {
+          Marker(
+            markerId: StackedMapsModel.frontPlaceMarkerId,
+            position: LatLng(map.frontPlace.lat, map.frontPlace.lon),
+          )
+        };
+      }),
+    );
+  }
+
+  void setBackMapMarker(StackedMapsModel map) {
+    Future(
+      () => setState(() {
+        _backPlaceMarker = {
+          Marker(
+            markerId: StackedMapsModel.backPlaceMarkerId,
+            position: LatLng(map.backPlace.lat, map.backPlace.lon),
+          )
+        };
+      }),
+    );
+  }
+
   void updateBackMap(StackedMapsModel map) {
     _backCameraPosition = updateCameraLocation(
       _backCameraPosition,
-      LatLng(map.backPlace.lat, map.backPlace.lng),
+      LatLng(map.backPlace.lat, map.backPlace.lon),
     );
 
-    updateMap(_backController, _backCameraPosition);
+    setCameraPosition(_backController, _backCameraPosition);
     setBackMapBoundary(map);
     setBackMapMarker(map);
 
@@ -232,44 +226,50 @@ class _StackedMapsState extends State<StackedMaps> {
   void updateFrontMap(StackedMapsModel map) {
     _frontCameraPosition = updateCameraLocation(
       _frontCameraPosition,
-      LatLng(map.frontPlace.lat, map.frontPlace.lng),
+      LatLng(map.frontPlace.lat, map.frontPlace.lon),
     );
 
-    updateMap(_frontController, _frontCameraPosition);
+    setCameraPosition(_frontController, _frontCameraPosition);
     setFrontMapBoundary(map);
     setFrontMapMarker(map);
 
     map.resetUpdateFrontMap();
   }
 
+  void update(map) {
+    if (_frontPlacePolyline.isEmpty) {
+      setFrontMapBoundary(map);
+    }
+
+    if (_backPlacePolyline.isEmpty) {
+      setBackMapBoundary(map);
+    }
+
+    if (_frontPlaceMarker.isEmpty) {
+      setFrontMapMarker(map);
+    }
+
+    if (_backPlaceMarker.isEmpty) {
+      setBackMapMarker(map);
+    }
+
+    if (needSwitchMaps(map)) {
+      switchMaps();
+    }
+
+    if (map.updateFrontMap) {
+      updateFrontMap(map);
+    }
+
+    if (map.updateBackMap) {
+      updateBackMap(map);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<StackedMapsModel>(builder: (context, map, child) {
-      if (_frontPlacePolyline == null) {
-        setFrontMapBoundary(map);
-      }
-      if (_backPlacePolyline == null) {
-        setBackMapBoundary(map);
-      }
-
-      if (_frontPlaceMarker == null) {
-        setFrontMapMarker(map);
-      }
-      if (_backPlaceMarker == null) {
-        setBackMapMarker(map);
-      }
-
-      if (needSwitchMaps(map)) {
-        switchMaps();
-      }
-
-      if (map.updateFrontMap) {
-        updateFrontMap(map);
-      }
-
-      if (map.updateBackMap) {
-        updateBackMap(map);
-      }
+      update(map);
 
       _opacity = map.opacity;
 
