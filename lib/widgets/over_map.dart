@@ -24,7 +24,15 @@ class OverMap extends StatefulWidget {
   @override
   State createState() => _OverMapState();
 
-  static zoom(GoogleMapController? controller, CameraPosition position) {
+  static zoom(GoogleMapController? controller, double newZoom) {
+    controller?.getZoomLevel().then((zoom) => {
+          if (zoom != newZoom)
+            {controller.moveCamera(CameraUpdate.zoomTo(newZoom))}
+        });
+  }
+
+  static zoomByCameraPosition(
+      GoogleMapController? controller, CameraPosition position) {
     controller?.getZoomLevel().then((zoom) => {
           if (zoom != position.zoom)
             {controller.moveCamera(CameraUpdate.zoomTo(position.zoom))}
