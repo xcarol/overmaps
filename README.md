@@ -57,9 +57,15 @@ Setup these files:
 
     _"key" is stored at [Google APIs](https://console.cloud.google.com/apis/credentials/key/266?project=overmap-1503847389383)_
 
-### Build bundle
+### Build
 
-`flutter build appbundle --dart-define=MAPS_API_KEY=key`
+#### Bundle
+
+`flutter build appbundle --release --dart-define=MAPS_API_KEY=key`
+
+#### Web
+
+`flutter build web --release --dart-define=MAPS_API_KEY=key`
 
 - MAPS_API_KEY "key" is the same used in the _secrets.properties_.  
 
