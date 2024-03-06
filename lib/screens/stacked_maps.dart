@@ -78,7 +78,9 @@ class _StackedMapsState extends State<StackedMaps> {
 
   Function get backCameraMove {
     return (CameraPosition position) {
-      _backCameraPosition = position;
+      setState(() {
+        _backCameraPosition = position;
+      });
     };
   }
 
@@ -92,8 +94,10 @@ class _StackedMapsState extends State<StackedMaps> {
 
   Function get frontCameraMove {
     return (CameraPosition position) {
-      _zoom = position.zoom;
-      _frontCameraPosition = position;
+      setState(() {
+        _zoom = position.zoom;
+        _frontCameraPosition = position;
+      });
       OverMap.zoomByCameraPosition(_backController, position);
     };
   }
