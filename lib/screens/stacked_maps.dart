@@ -5,6 +5,7 @@ import 'package:overmaps/services/places_service.dart';
 import 'package:overmaps/widgets/over_map.dart';
 import 'package:overmaps/models/stacked_maps_model.dart';
 import 'package:provider/provider.dart';
+import 'package:vertical_slider/vertical_slider.dart';
 
 class StackedMaps extends StatefulWidget {
   const StackedMaps({super.key});
@@ -15,6 +16,7 @@ class StackedMaps extends StatefulWidget {
 
 class _StackedMapsState extends State<StackedMaps> {
   late double _opacity = 0.0;
+  late double _zoom = StackedMapsModel.defaultZoom;
 
   GoogleMapController? _frontController;
   GoogleMapController? _backController;
@@ -90,8 +92,9 @@ class _StackedMapsState extends State<StackedMaps> {
 
   Function get frontCameraMove {
     return (CameraPosition position) {
+      _zoom = position.zoom;
       _frontCameraPosition = position;
-      OverMap.zoom(_backController, position);
+      OverMap.zoomByCameraPosition(_backController, position);
     };
   }
 
@@ -273,11 +276,29 @@ class _StackedMapsState extends State<StackedMaps> {
 
       _opacity = map.opacity;
 
-      return Stack(
-        children: stackedMaps(
-          frontMap(map),
-          backMap(map),
-        ),
+      return Row(
+        children: [
+          VerticalSlider(
+            value: _zoom,
+            min: 0.0,
+            max: 22.0,
+            onChanged: (double value) {
+              setState(() {
+                _zoom = value;
+              });
+              OverMap.zoom(_frontController, _zoom);
+              OverMap.zoom(_backController, _zoom);
+            },
+          ),
+          Expanded(
+            child: Stack(
+              children: stackedMaps(
+                frontMap(map),
+                backMap(map),
+              ),
+            ),
+          ),
+        ],
       );
     });
   }
