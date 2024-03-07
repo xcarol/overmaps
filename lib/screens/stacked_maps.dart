@@ -34,6 +34,19 @@ class _StackedMapsState extends State<StackedMaps> {
     target: StackedMapsModel.sydneyLocation,
   );
 
+  get tools => VerticalSlider(
+        value: _zoom,
+        min: StackedMapsModel.minZoom,
+        max: StackedMapsModel.maxZoom,
+        onChanged: (double value) {
+          setState(() {
+            _zoom = value;
+          });
+          OverMap.zoom(_frontController, _zoom);
+          OverMap.zoom(_backController, _zoom);
+        },
+      );
+
   frontMap(StackedMapsModel map) => OverMap(
         place: map.frontPlace.name,
         coordinates: _frontCameraPosition.target,
@@ -275,34 +288,27 @@ class _StackedMapsState extends State<StackedMaps> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<StackedMapsModel>(builder: (context, map, child) {
-      update(map);
+    return Consumer<StackedMapsModel>(builder: (context, stackedMap, child) {
+      update(stackedMap);
 
-      _opacity = map.opacity;
+      _opacity = stackedMap.opacity;
 
-      return Row(
-        children: [
-          VerticalSlider(
-            value: _zoom,
-            min: 0.0,
-            max: 22.0,
-            onChanged: (double value) {
-              setState(() {
-                _zoom = value;
-              });
-              OverMap.zoom(_frontController, _zoom);
-              OverMap.zoom(_backController, _zoom);
-            },
-          ),
-          Expanded(
-            child: Stack(
-              children: stackedMaps(
-                frontMap(map),
-                backMap(map),
-              ),
+      List<Widget> children = [
+        Expanded(
+          child: Stack(
+            children: stackedMaps(
+              frontMap(stackedMap),
+              backMap(stackedMap),
             ),
           ),
-        ],
+        ),
+      ];
+
+      if (stackedMap.showTools == true) {
+        children.add(tools);
+      }
+      return Row(
+        children: children,
       );
     });
   }
