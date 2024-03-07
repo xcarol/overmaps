@@ -19,6 +19,8 @@ class StackedMapsModel extends ChangeNotifier {
   static double halfOpacity = 0.5;
   static double initialOpacity = 0.3;
   static double opaque = 1.0;
+  static double minZoom = 0.0;
+  static double maxZoom = 22.0;
 
   static PolylineId frontPlacePolylineId = const PolylineId(
     'frontPlacePolylineId',
@@ -34,6 +36,7 @@ class StackedMapsModel extends ChangeNotifier {
     'backPlaceMarkerId',
   );
 
+  bool _showTools = false;
   double _opacity = initialOpacity;
   bool _updateFrontMap = false;
   bool _updateBackMap = false;
@@ -56,11 +59,17 @@ class StackedMapsModel extends ChangeNotifier {
     'osm_type': sydneyOsmType,
   });
 
+  bool get showTools => _showTools;
   double get opacity => _opacity;
   bool get updateFrontMap => _updateFrontMap;
   bool get updateBackMap => _updateBackMap;
   Color get frontPlaceBoundaryColor => _frontPlaceBoundaryColor;
   Color get backPlaceBoundaryColor => _backPlaceBoundaryColor;
+
+  set showTools(bool value) {
+    _showTools = value;
+    notifyListeners();
+  }
 
   set updateFrontMap(bool? anyvalue) {
     _updateFrontMap = true;

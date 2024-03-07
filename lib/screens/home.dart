@@ -13,11 +13,14 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  final IconData showToolsIcon = Icons.arrow_drop_up;
+  final IconData hideToolsIcon = Icons.arrow_drop_down;
   final Color _rightBoundaryColor = StackedMapsModel.colorBlue;
   final Color _leftBoundaryColor = StackedMapsModel.colorRed;
   late double _opacity = StackedMapsModel.initialOpacity;
   late String _rightName = StackedMapsModel.sydneyName;
   late String _leftName = StackedMapsModel.barcelonaName;
+  late IconData _showHideToolsIcon = showToolsIcon;
 
   get isLeftPlaceInFront => _opacity <= StackedMapsModel.halfOpacity;
   get isRightPlaceInFront => _opacity > StackedMapsModel.halfOpacity;
@@ -28,6 +31,23 @@ class _HomeState extends State<Home> {
       isRightPlaceInFront ? Alignment.bottomLeft : Alignment.bottomRight;
   get rightNameText => Text(isRightPlaceInFront ? _rightName : _leftName);
   get leftNameText => Text(isRightPlaceInFront ? _leftName : _rightName);
+
+  get toolsRow => Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          SizedBox(
+            height: 24,
+            child: AspectRatio(
+              aspectRatio: 1.0,
+              child: IconButton(
+                onPressed: showHideTools,
+                icon: Icon(_showHideToolsIcon),
+                padding: EdgeInsets.zero,
+              ),
+            ),
+          ),
+        ],
+      );
 
   get mapNamesRow => Row(children: [
         IconButton(onPressed: searchLeftPlace, icon: const Icon(Icons.search)),
@@ -70,6 +90,18 @@ class _HomeState extends State<Home> {
       MaterialPageRoute(
           builder: (context) => SearchPlace(selectedPlace: selectedPlace)),
     );
+  }
+
+  showHideTools() {
+    setState(() {
+      if (_showHideToolsIcon == showToolsIcon) {
+        _showHideToolsIcon = hideToolsIcon;
+        Provider.of<StackedMapsModel>(context, listen: false).showTools = true;
+      } else {
+        _showHideToolsIcon = showToolsIcon;
+        Provider.of<StackedMapsModel>(context, listen: false).showTools = false;
+      }
+    });
   }
 
   searchLeftPlace() {
@@ -116,7 +148,11 @@ class _HomeState extends State<Home> {
         body: const StackedMaps(),
         persistentFooterButtons: [
           Column(
-            children: [mapNamesRow, sliderRow],
+            children: [
+              toolsRow,
+              mapNamesRow,
+              sliderRow,
+            ],
           )
         ]);
   }
