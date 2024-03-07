@@ -1,11 +1,11 @@
 {
-    "name": "overmaps",
+    "name": "Overmaps",
     "short_name": "overmaps",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Visually compare locations using Google Maps.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
