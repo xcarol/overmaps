@@ -10,24 +10,43 @@ const String _osmSearchDetails =
     'https://nominatim.openstreetmap.org/lookup?format=json&osm_ids={OSM_ID}&polygon_kml=1';
 
 class PlacesService {
+  Future<dynamic> searchPlaces(
+    String search,
+  ) async {
+    try {
+      final response = await http.get(Uri.parse(
+        _osmSearchPlace.replaceFirst('{SEARCH}', search),
+      ));
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        throw Exception(response.statusCode);
+      }
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
   Future<Map<String, dynamic>> getPlaceDetails(
     String osmId,
   ) async {
-    final response = await http.get(Uri.parse(
-      _osmSearchDetails.replaceFirst('{OSM_ID}', osmId),
-    ));
+    try {
+      final response = await http.get(Uri.parse(
+        _osmSearchDetails.replaceFirst('{OSM_ID}', osmId),
+      ));
 
-    if (response.statusCode == 200) {
-      List places = json.decode(response.body);
-      if (places.length == 1) {
-        return places.firstOrNull;
-      } else {
+      if (response.statusCode == 200) {
+        List places = json.decode(response.body);
+        if (places.length == 1) {
+          return places.firstOrNull;
+        }
         return <String, dynamic>{};
+      } else {
+        throw Exception(response.statusCode);
       }
-    } else {
-      throw Exception(
-        'Error: ${response.statusCode} for a request of a place details',
-      );
+    } catch (e) {
+      throw Exception(e);
     }
   }
 
@@ -35,7 +54,8 @@ class PlacesService {
     Map<String, dynamic> poligon,
   ) {
     List<String> polygonCoordinates = [];
-    XmlDocument geokml = XmlDocument.parse(poligon['geokml'] ?? '');
+    XmlDocument geokml =
+        XmlDocument.parse(poligon['geokml'] ?? '<root></root>');
 
     for (XmlElement element in geokml.findAllElements('coordinates')) {
       polygonCoordinates.add(element.innerText);
@@ -48,20 +68,5 @@ class PlacesService {
     Place place,
   ) async {
     return getPlacePolygon(await getPlaceDetails(place.placeId));
-  }
-
-  Future<dynamic> searchPlaces(
-    String search,
-  ) async {
-    final response = await http.get(Uri.parse(
-      _osmSearchPlace.replaceFirst('{SEARCH}', search),
-    ));
-
-    if (response.statusCode == 200) {
-      return json.decode(response.body);
-    } else {
-      throw Exception(
-          'Error: ${response.statusCode} for a request of a place search');
-    }
   }
 }

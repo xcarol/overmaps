@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:overmaps/helpers/place_attributes.dart';
 import 'package:overmaps/models/place.dart';
 import 'package:overmaps/services/places_service.dart';
 
@@ -67,9 +68,9 @@ class _SearchPlaceState extends State<SearchPlace> {
         itemBuilder: (context, index) {
           var place = placesList.elementAt(index);
           return ListTile(
-            title: Text(place['display_name']),
+            title: Text(place[PlaceAttributes.literals.displayName]),
             onTap: () {
-              widget.selectedPlace(Place(place));
+              widget.selectedPlace(Place.osm(place));
             },
           );
         },

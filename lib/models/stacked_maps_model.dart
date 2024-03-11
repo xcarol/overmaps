@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:overmaps/models/place.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+const preferencesNames = (
+  showTools: 'showTools',
+  opacity: 'opacity',
+  frontPlace: 'frontPlace',
+  backPlace: 'backPlace',
+);
 
 class StackedMapsModel extends ChangeNotifier {
   static LatLng barcelonaLocation = const LatLng(41.3828939, 2.1774322);
@@ -36,14 +44,7 @@ class StackedMapsModel extends ChangeNotifier {
     'backPlaceMarkerId',
   );
 
-  bool _showTools = false;
-  double _opacity = initialOpacity;
-  bool _updateFrontMap = false;
-  bool _updateBackMap = false;
-  Color _frontPlaceBoundaryColor = colorRed;
-  Color _backPlaceBoundaryColor = colorBlue;
-
-  Place frontPlace = Place(<String, dynamic>{
+  final Place _barcelonaPlace = Place.osm(<String, dynamic>{
     'name': barcelonaName,
     'lat': barcelonaLocation.latitude.toString(),
     'lon': barcelonaLocation.longitude.toString(),
@@ -51,7 +52,7 @@ class StackedMapsModel extends ChangeNotifier {
     'osm_type': barcelonaOsmType,
   });
 
-  Place backPlace = Place(<String, dynamic>{
+  final Place _sydneyPlace = Place.osm(<String, dynamic>{
     'name': sydneyName,
     'lat': sydneyLocation.latitude.toString(),
     'lon': sydneyLocation.longitude.toString(),
@@ -59,16 +60,57 @@ class StackedMapsModel extends ChangeNotifier {
     'osm_type': sydneyOsmType,
   });
 
-  bool get showTools => _showTools;
-  double get opacity => _opacity;
+  late SharedPreferences preferences;
+
+  bool _updateFrontMap = false;
+  bool _updateBackMap = false;
+  Color _frontPlaceBoundaryColor = colorRed;
+  Color _backPlaceBoundaryColor = colorBlue;
+
+  bool get showTools =>
+      preferences.getBool(preferencesNames.showTools) ?? false;
+  double get opacity =>
+      preferences.getDouble(preferencesNames.opacity) ?? initialOpacity;
+
+  Place get frontPlace {
+    return Place.deserialize(
+        preferences.getString(preferencesNames.frontPlace) ??
+            _barcelonaPlace.serialize());
+  }
+
+  Place get backPlace {
+    return Place.deserialize(
+        preferences.getString(preferencesNames.backPlace) ??
+            _sydneyPlace.serialize());
+  }
+
   bool get updateFrontMap => _updateFrontMap;
   bool get updateBackMap => _updateBackMap;
   Color get frontPlaceBoundaryColor => _frontPlaceBoundaryColor;
   Color get backPlaceBoundaryColor => _backPlaceBoundaryColor;
 
   set showTools(bool value) {
-    _showTools = value;
-    notifyListeners();
+    preferences.setBool(preferencesNames.showTools, value).then((bool value) {
+      notifyListeners();
+    });
+  }
+
+  set opacity(double opacity) {
+    preferences.setDouble(preferencesNames.opacity, opacity).then((bool value) {
+      notifyListeners();
+    });
+  }
+
+  set frontPlace(Place place) {
+    preferences
+        .setString(preferencesNames.frontPlace, place.serialize())
+        .then((bool value) => notifyListeners());
+  }
+
+  set backPlace(Place place) {
+    preferences
+        .setString(preferencesNames.backPlace, place.serialize())
+        .then((bool value) => notifyListeners());
   }
 
   set updateFrontMap(bool? anyvalue) {
@@ -77,11 +119,6 @@ class StackedMapsModel extends ChangeNotifier {
 
   set updateBackMap(bool? anyvalue) {
     _updateBackMap = true;
-  }
-
-  set opacity(double opacity) {
-    _opacity = opacity;
-    notifyListeners();
   }
 
   set frontPlaceBoundaryColor(Color color) {

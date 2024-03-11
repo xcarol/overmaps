@@ -18,13 +18,25 @@ var preffixes = {
 class Place {
   final PlaceAttributes _attributes = PlaceAttributes();
 
-  Place(Map<String, dynamic> osmDetails) {
+  Place(PlaceAttributes attributes) {
+    _attributes.copyFrom(attributes);
+  }
+
+  Place.osm(Map<String, dynamic> osmDetails) {
     _attributes.name = osmDetails[PlaceAttributes.literals.name] ?? '';
     _attributes.latitude =
         double.parse(osmDetails[PlaceAttributes.literals.latitude] ?? '0.0');
     _attributes.longitude =
         double.parse(osmDetails[PlaceAttributes.literals.longitude] ?? '0.0');
     _attributes.placeId = getPlaceId(osmDetails);
+  }
+
+  String serialize() {
+    return _attributes.encode();
+  }
+
+  static Place deserialize(String serializedPlace) {
+    return Place(PlaceAttributes.decode(serializedPlace));
   }
 
   String getPlaceId(Map<String, dynamic> osmDetails) {
