@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:overmaps/helpers/snack_bar.dart';
 import 'package:overmaps/models/place.dart';
 import 'package:overmaps/services/places_service.dart';
 import 'package:overmaps/widgets/over_map.dart';
@@ -49,7 +50,7 @@ class _StackedMapsState extends State<StackedMaps> {
 
   frontMap(StackedMapsModel map) => OverMap(
         place: map.frontPlace.name,
-        coordinates: _frontCameraPosition.target,
+        coordinates: LatLng(map.frontPlace.lat, map.frontPlace.lon),
         boundaries: _frontPlacePolyline,
         markers: _frontPlaceMarker,
         onMapCreated: frontMapCreated,
@@ -58,7 +59,7 @@ class _StackedMapsState extends State<StackedMaps> {
 
   backMap(StackedMapsModel map) => OverMap(
         place: map.backPlace.name,
-        coordinates: _backCameraPosition.target,
+        coordinates: LatLng(map.backPlace.lat, map.backPlace.lon),
         boundaries: _backPlacePolyline,
         markers: _backPlaceMarker,
         onMapCreated: backMapCreated,
@@ -122,7 +123,8 @@ class _StackedMapsState extends State<StackedMaps> {
   ) async {
     PlacesService placesService = PlacesService();
 
-    List<String> polygons = await placesService.getPlaceBoundaryPolygons(place);
+    List<String> polygons =
+        await placesService.getPlaceBoundaryPolygons(place);
     Set<Polyline> boundaries = {};
 
     for (String polygon in polygons) {
@@ -187,7 +189,10 @@ class _StackedMapsState extends State<StackedMaps> {
       map.frontPlace,
       StackedMapsModel.frontPlacePolylineId,
       map.frontPlaceBoundaryColor,
-    );
+    ).catchError((error) {
+      SnackMessage.autoHideSnackBar(context, 'Error retrieving boundaries!');
+      return [] as Future<Set<Polyline>>;
+    });
     setState(() {
       _frontPlacePolyline = boundary;
     });
@@ -198,7 +203,10 @@ class _StackedMapsState extends State<StackedMaps> {
       map.backPlace,
       StackedMapsModel.backPlacePolylineId,
       map.backPlaceBoundaryColor,
-    );
+    ).catchError((error) {
+      SnackMessage.autoHideSnackBar(context, 'Error retrieving boundaries!');
+      return [] as Future<Set<Polyline>>;
+    });
     setState(() {
       _backPlacePolyline = boundary;
     });

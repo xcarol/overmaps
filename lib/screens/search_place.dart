@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:overmaps/helpers/place_attributes.dart';
+import 'package:overmaps/helpers/snack_bar.dart';
 import 'package:overmaps/models/place.dart';
 import 'package:overmaps/services/places_service.dart';
 
@@ -39,7 +40,10 @@ class _SearchPlaceState extends State<SearchPlace> {
   }
 
   void inputChanged(String value) async {
-    final places = await _service.searchPlaces(value);
+    final places = await _service.searchPlaces(value).catchError((error) {
+      SnackMessage.autoHideSnackBar(context, 'Error retrieving places!');
+      return [] as Future<dynamic>;
+    });
     setPlacesListItems(places);
   }
 

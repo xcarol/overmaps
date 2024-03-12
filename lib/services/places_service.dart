@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:overmaps/models/place.dart';
 import 'package:xml/xml.dart';
 import 'package:http/http.dart' as http;
@@ -13,40 +14,36 @@ class PlacesService {
   Future<dynamic> searchPlaces(
     String search,
   ) async {
-    try {
-      final response = await http.get(Uri.parse(
-        _osmSearchPlace.replaceFirst('{SEARCH}', search),
-      ));
+    final response = await http.get(Uri.parse(
+      _osmSearchPlace.replaceFirst('{SEARCH}', search),
+    ));
 
-      if (response.statusCode == 200) {
-        return json.decode(response.body);
-      } else {
-        throw Exception(response.statusCode);
-      }
-    } catch (e) {
-      throw Exception(e);
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception(
+          'Error: ${response.statusCode} for a request of a place search');
     }
   }
 
   Future<Map<String, dynamic>> getPlaceDetails(
     String osmId,
   ) async {
-    try {
-      final response = await http.get(Uri.parse(
-        _osmSearchDetails.replaceFirst('{OSM_ID}', osmId),
-      ));
+    final response = await http.get(Uri.parse(
+      _osmSearchDetails.replaceFirst('{OSM_ID}', osmId),
+    ));
 
-      if (response.statusCode == 200) {
-        List places = json.decode(response.body);
-        if (places.length == 1) {
-          return places.firstOrNull;
-        }
-        return <String, dynamic>{};
+    if (response.statusCode == 200) {
+      List places = json.decode(response.body);
+      if (places.length == 1) {
+        return places.firstOrNull;
       } else {
-        throw Exception(response.statusCode);
+        return <String, dynamic>{};
       }
-    } catch (e) {
-      throw Exception(e);
+    } else {
+      throw Exception(
+        'Error: ${response.statusCode} for a request of a place details',
+      );
     }
   }
 
@@ -54,6 +51,7 @@ class PlacesService {
     Map<String, dynamic> poligon,
   ) {
     List<String> polygonCoordinates = [];
+
     XmlDocument geokml =
         XmlDocument.parse(poligon['geokml'] ?? '<root></root>');
 
