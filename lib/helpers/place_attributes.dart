@@ -21,10 +21,10 @@ class PlaceAttributes {
 
   PlaceAttributes();
   PlaceAttributes.fromMap(Map attr) {
-    name = attr['name'] ?? '';
-    latitude = double.parse(attr['latitude'] ?? '');
-    longitude = double.parse(attr['longitude'] ?? '');
-    placeId = attr['placeId'] ?? '';
+    name = attr[PlaceAttributes.literals.name] ?? '';
+    latitude = double.parse(attr[PlaceAttributes.literals.latitude] ?? '');
+    longitude = double.parse(attr[PlaceAttributes.literals.longitude] ?? '');
+    placeId = attr[PlaceAttributes.literals.placeId] ?? '';
   }
 
   copyFrom(PlaceAttributes attributtes) {
@@ -34,13 +34,12 @@ class PlaceAttributes {
     placeId = attributtes.placeId;
   }
 
-  //TODO: Use dart:convert library json methods
   String encode() {
     return '{'
-        '  "name": "$name",'
-        '  "latitude": "$latitude",'
-        '  "longitude": "$longitude",'
-        '  "place_id": "$placeId"'
+        '  "${PlaceAttributes.literals.name}": "$name",'
+        '  "${PlaceAttributes.literals.latitude}": "$latitude",'
+        '  "${PlaceAttributes.literals.longitude}": "$longitude",'
+        '  "${PlaceAttributes.literals.placeId}": "$placeId"'
         '}';
   }
 
