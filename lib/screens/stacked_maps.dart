@@ -123,8 +123,7 @@ class _StackedMapsState extends State<StackedMaps> {
   ) async {
     PlacesService placesService = PlacesService();
 
-    List<String> polygons =
-        await placesService.getPlaceBoundaryPolygons(place);
+    List<String> polygons = await placesService.getPlaceBoundaryPolygons(place);
     Set<Polyline> boundaries = {};
 
     for (String polygon in polygons) {
