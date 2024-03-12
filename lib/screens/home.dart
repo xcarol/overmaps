@@ -31,12 +31,21 @@ class _HomeState extends State<Home> {
   final IconData hideToolsIcon = Icons.arrow_drop_down;
   final Color _rightBoundaryColor = StackedMapsModel.colorBlue;
   final Color _leftBoundaryColor = StackedMapsModel.colorRed;
-  late String _rightName = Provider.of<StackedMapsModel>(context, listen: false).backPlace.name;
-  late String _leftName = Provider.of<StackedMapsModel>(context, listen: false).frontPlace.name;
-  late IconData _showHideToolsIcon = showToolsIcon;
+  late String _rightName =
+      Provider.of<StackedMapsModel>(context, listen: false).backPlace.name;
+  late String _leftName =
+      Provider.of<StackedMapsModel>(context, listen: false).frontPlace.name;
+  late IconData _showHideToolsIcon =
+      Provider.of<StackedMapsModel>(context, listen: false).showTools
+          ? showToolsIcon
+          : hideToolsIcon;
 
-  get isLeftPlaceInFront => Provider.of<StackedMapsModel>(context, listen: false).opacity <= StackedMapsModel.halfOpacity;
-  get isRightPlaceInFront => Provider.of<StackedMapsModel>(context, listen: false).opacity > StackedMapsModel.halfOpacity;
+  get isLeftPlaceInFront =>
+      Provider.of<StackedMapsModel>(context, listen: false).opacity <=
+      StackedMapsModel.halfOpacity;
+  get isRightPlaceInFront =>
+      Provider.of<StackedMapsModel>(context, listen: false).opacity >
+      StackedMapsModel.halfOpacity;
 
   get rightAlignment =>
       isRightPlaceInFront ? Alignment.topRight : Alignment.topLeft;
