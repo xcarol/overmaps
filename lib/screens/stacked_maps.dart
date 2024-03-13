@@ -7,7 +7,7 @@ import 'package:overmaps/widgets/over_map.dart';
 import 'package:overmaps/models/stacked_maps_model.dart';
 import 'package:provider/provider.dart';
 import 'package:vertical_slider/vertical_slider.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class StackedMaps extends StatefulWidget {
   const StackedMaps({super.key});
 
@@ -189,7 +189,7 @@ class _StackedMapsState extends State<StackedMaps> {
       StackedMapsModel.frontPlacePolylineId,
       map.frontPlaceBoundaryColor,
     ).catchError((error) {
-      SnackMessage.autoHideSnackBar(context, 'Error retrieving boundaries!');
+      SnackMessage.autoHideSnackBar(context, AppLocalizations.of(context)!.errorRetrieveBoundaries);
       return [] as Future<Set<Polyline>>;
     });
     setState(() {
@@ -203,7 +203,7 @@ class _StackedMapsState extends State<StackedMaps> {
       StackedMapsModel.backPlacePolylineId,
       map.backPlaceBoundaryColor,
     ).catchError((error) {
-      SnackMessage.autoHideSnackBar(context, 'Error retrieving boundaries!');
+      SnackMessage.autoHideSnackBar(context, AppLocalizations.of(context)!.errorRetrieveBoundaries);
       return [] as Future<Set<Polyline>>;
     });
     setState(() {

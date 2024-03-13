@@ -1,0 +1,5 @@
+{
+  "findPlace": "Busca un lugar...",
+  "errorSearchPlaces": "'Error obteniendo los lugres!'",
+  "errorRetrieveBoundaries": "'Error obteniendo el contorno!'"
+}
