@@ -14,18 +14,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  @override
-  void initState() {
-    super.initState();
-    _loadPreferences();
-  }
-
-  Future<void> _loadPreferences() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      Provider.of<StackedMapsModel>(context, listen: false).preferences = prefs;
-    });
-  }
+  Future<SharedPreferences> preferences = SharedPreferences.getInstance();
 
   final IconData showToolsIcon = Icons.arrow_drop_up;
   final IconData hideToolsIcon = Icons.arrow_drop_down;
@@ -55,42 +44,42 @@ class _HomeState extends State<Home> {
   get leftNameText => Text(isRightPlaceInFront ? _leftName : _rightName);
 
   get toolsRow => Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          SizedBox(
-            height: 24,
-            child: AspectRatio(
-              aspectRatio: 1.0,
-              child: IconButton(
-                onPressed: showHideTools,
-                icon: Icon(_showHideToolsIcon),
-                padding: EdgeInsets.zero,
-              ),
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        SizedBox(
+          height: 24,
+          child: AspectRatio(
+            aspectRatio: 1.0,
+            child: IconButton(
+              onPressed: showHideTools,
+              icon: Icon(_showHideToolsIcon),
+              padding: EdgeInsets.zero,
             ),
           ),
-        ],
-      );
+        ),
+      ],
+    );
 
   get mapNamesRow => Row(children: [
-        IconButton(onPressed: searchLeftPlace, icon: const Icon(Icons.search)),
-        Expanded(
-          child: Column(
-            children: [
-              Align(alignment: rightAlignment, child: rightNameText),
-              Align(alignment: leftAlignment, child: leftNameText),
-            ],
-          ),
+      IconButton(onPressed: searchLeftPlace, icon: const Icon(Icons.search)),
+      Expanded(
+        child: Column(
+          children: [
+            Align(alignment: rightAlignment, child: rightNameText),
+            Align(alignment: leftAlignment, child: leftNameText),
+          ],
         ),
-        IconButton(onPressed: searchRightPlace, icon: const Icon(Icons.search)),
-      ]);
+      ),
+      IconButton(onPressed: searchRightPlace, icon: const Icon(Icons.search)),
+    ]);
 
   get sliderRow => Slider(
-      value: Provider.of<StackedMapsModel>(context, listen: false).opacity,
-      thumbColor: Theme.of(context).colorScheme.secondary,
-      activeColor: const Color.fromARGB(0, 0, 0, 0),
-      inactiveColor: const Color.fromARGB(0, 0, 0, 0),
-      max: 1.0,
-      onChanged: sliderMoved);
+        value: Provider.of<StackedMapsModel>(context, listen: false).opacity,
+        thumbColor: Theme.of(context).colorScheme.secondary,
+        activeColor: const Color.fromARGB(0, 0, 0, 0),
+        inactiveColor: const Color.fromARGB(0, 0, 0, 0),
+        max: 1.0,
+        onChanged: sliderMoved);
 
   void setBackPlace(Place place, Color boundaryColor) {
     Provider.of<StackedMapsModel>(context, listen: false).updateBackMap = true;
@@ -162,19 +151,28 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text('Overmaps'),
-        ),
-        body: const StackedMaps(),
-        persistentFooterButtons: [
-          Column(
-            children: [
-              toolsRow,
-              mapNamesRow,
-              sliderRow,
-            ],
-          )
-        ]);
+    return FutureBuilder(
+        future: preferences,
+        builder: (context, snapshot) {
+          if (snapshot.data == null) {
+            return const Scaffold();
+          }
+          Provider.of<StackedMapsModel>(context, listen: false).preferences =
+              snapshot.data as SharedPreferences;
+          return Scaffold(
+              appBar: AppBar(
+                title: const Text('Overmaps'),
+              ),
+              body: const StackedMaps(),
+              persistentFooterButtons: [
+                Column(
+                  children: [
+                    toolsRow,
+                    mapNamesRow,
+                    sliderRow,
+                  ],
+                )
+              ]);
+        });
   }
 }
