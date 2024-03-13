@@ -4,6 +4,7 @@ import 'package:overmaps/models/stacked_maps_model.dart';
 import 'package:overmaps/screens/search_place.dart';
 import 'package:overmaps/screens/stacked_maps.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -13,17 +14,38 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  @override
+  void initState() {
+    super.initState();
+    _loadPreferences();
+  }
+
+  Future<void> _loadPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      Provider.of<StackedMapsModel>(context, listen: false).preferences = prefs;
+    });
+  }
+
   final IconData showToolsIcon = Icons.arrow_drop_up;
   final IconData hideToolsIcon = Icons.arrow_drop_down;
   final Color _rightBoundaryColor = StackedMapsModel.colorBlue;
   final Color _leftBoundaryColor = StackedMapsModel.colorRed;
-  late double _opacity = StackedMapsModel.initialOpacity;
-  late String _rightName = StackedMapsModel.sydneyName;
-  late String _leftName = StackedMapsModel.barcelonaName;
-  late IconData _showHideToolsIcon = showToolsIcon;
+  late String _rightName =
+      Provider.of<StackedMapsModel>(context, listen: false).backPlace.name;
+  late String _leftName =
+      Provider.of<StackedMapsModel>(context, listen: false).frontPlace.name;
+  late IconData _showHideToolsIcon =
+      Provider.of<StackedMapsModel>(context, listen: false).showTools
+          ? showToolsIcon
+          : hideToolsIcon;
 
-  get isLeftPlaceInFront => _opacity <= StackedMapsModel.halfOpacity;
-  get isRightPlaceInFront => _opacity > StackedMapsModel.halfOpacity;
+  get isLeftPlaceInFront =>
+      Provider.of<StackedMapsModel>(context, listen: false).opacity <=
+      StackedMapsModel.halfOpacity;
+  get isRightPlaceInFront =>
+      Provider.of<StackedMapsModel>(context, listen: false).opacity >
+      StackedMapsModel.halfOpacity;
 
   get rightAlignment =>
       isRightPlaceInFront ? Alignment.topRight : Alignment.topLeft;
@@ -63,7 +85,7 @@ class _HomeState extends State<Home> {
       ]);
 
   get sliderRow => Slider(
-      value: _opacity,
+      value: Provider.of<StackedMapsModel>(context, listen: false).opacity,
       thumbColor: Theme.of(context).colorScheme.secondary,
       activeColor: const Color.fromARGB(0, 0, 0, 0),
       inactiveColor: const Color.fromARGB(0, 0, 0, 0),
@@ -135,7 +157,6 @@ class _HomeState extends State<Home> {
   sliderMoved(double opacity) {
     setState(() {
       Provider.of<StackedMapsModel>(context, listen: false).opacity = opacity;
-      _opacity = opacity;
     });
   }
 
