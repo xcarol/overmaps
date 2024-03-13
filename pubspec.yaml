@@ -41,6 +41,9 @@ dependencies:
   xml: ^6.5.0
   vertical_slider: ^0.0.1
   shared_preferences: ^2.2.2
+  flutter_localizations:
+    sdk: flutter
+  intl: any
 
 dev_dependencies:
   flutter_test:
@@ -96,6 +99,8 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+  generate: true
 
 flutter_launcher_icons:
   android: true

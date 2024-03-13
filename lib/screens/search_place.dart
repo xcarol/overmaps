@@ -3,6 +3,7 @@ import 'package:overmaps/helpers/place_attributes.dart';
 import 'package:overmaps/helpers/snack_bar.dart';
 import 'package:overmaps/models/place.dart';
 import 'package:overmaps/services/places_service.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SearchPlace extends StatefulWidget {
   final Function selectedPlace;
@@ -41,7 +42,7 @@ class _SearchPlaceState extends State<SearchPlace> {
 
   void inputChanged(String value) async {
     final places = await _service.searchPlaces(value).catchError((error) {
-      SnackMessage.autoHideSnackBar(context, 'Error retrieving places!');
+      SnackMessage.autoHideSnackBar(context, AppLocalizations.of(context)!.errorSearchPlaces);
       return [] as Future<dynamic>;
     });
     setPlacesListItems(places);
@@ -53,7 +54,7 @@ class _SearchPlaceState extends State<SearchPlace> {
       padding: const EdgeInsets.all(16.0),
       child: TextField(
         decoration: InputDecoration(
-          labelText: 'Introduir text...',
+          labelText: AppLocalizations.of(context)!.findPlace,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),
           ),

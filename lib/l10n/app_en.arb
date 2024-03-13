@@ -1,0 +1,5 @@
+{
+  "findPlace": "Find place...",
+  "errorSearchPlaces": "'Error retrieving places!'",
+  "errorRetrieveBoundaries": "'Error retrieving boundaries!'"
+}
