@@ -8,6 +8,8 @@ const preferencesNames = (
   opacity: 'opacity',
   frontPlace: 'frontPlace',
   backPlace: 'backPlace',
+  frontPlaceBoundaryColor: 'frontPlaceBoundaryColor',
+  backPlaceBoundaryColor: 'backPlaceBoundaryColor',
 );
 
 class StackedMapsModel extends ChangeNotifier {
@@ -60,56 +62,85 @@ class StackedMapsModel extends ChangeNotifier {
     'osm_type': sydneyOsmType,
   });
 
-  late SharedPreferences preferences;
-
   bool _updateFrontMap = false;
   bool _updateBackMap = false;
-  Color _frontPlaceBoundaryColor = colorRed;
-  Color _backPlaceBoundaryColor = colorBlue;
+  late SharedPreferences _preferences;
+
+  void initPreferences(SharedPreferences data) {
+    _preferences = data;
+    if ((_preferences.getString(preferencesNames.frontPlace) ?? 'none') ==
+        'none') {
+      showTools = false;
+      opacity = initialOpacity;
+      frontPlace = _barcelonaPlace;
+      backPlace = _sydneyPlace;
+      frontPlaceBoundaryColor = colorRed;
+      backPlaceBoundaryColor = colorBlue;
+    }
+  }
 
   bool get showTools =>
-      preferences.getBool(preferencesNames.showTools) ?? false;
+      _preferences.getBool(preferencesNames.showTools) ?? false;
+
   double get opacity =>
-      preferences.getDouble(preferencesNames.opacity) ?? initialOpacity;
+      _preferences.getDouble(preferencesNames.opacity) as double;
 
   Place get frontPlace {
     return Place.deserialize(
-        preferences.getString(preferencesNames.frontPlace) ??
-            _barcelonaPlace.serialize());
+        _preferences.getString(preferencesNames.frontPlace) as String);
   }
 
   Place get backPlace {
     return Place.deserialize(
-        preferences.getString(preferencesNames.backPlace) ??
-            _sydneyPlace.serialize());
+        _preferences.getString(preferencesNames.backPlace) as String);
   }
+
+  Color get frontPlaceBoundaryColor =>
+      Color(_preferences.getInt(preferencesNames.frontPlaceBoundaryColor) ??
+          colorRed.value);
+
+  Color get backPlaceBoundaryColor =>
+      Color(_preferences.getInt(preferencesNames.backPlaceBoundaryColor) ??
+          colorBlue.value);
 
   bool get updateFrontMap => _updateFrontMap;
   bool get updateBackMap => _updateBackMap;
-  Color get frontPlaceBoundaryColor => _frontPlaceBoundaryColor;
-  Color get backPlaceBoundaryColor => _backPlaceBoundaryColor;
 
   set showTools(bool value) {
-    preferences.setBool(preferencesNames.showTools, value).then((bool value) {
+    _preferences.setBool(preferencesNames.showTools, value).then((bool value) {
       notifyListeners();
     });
   }
 
   set opacity(double opacity) {
-    preferences.setDouble(preferencesNames.opacity, opacity).then((bool value) {
+    _preferences
+        .setDouble(preferencesNames.opacity, opacity)
+        .then((bool value) {
       notifyListeners();
     });
   }
 
   set frontPlace(Place place) {
-    preferences
+    _preferences
         .setString(preferencesNames.frontPlace, place.serialize())
         .then((bool value) => notifyListeners());
   }
 
   set backPlace(Place place) {
-    preferences
+    _preferences
         .setString(preferencesNames.backPlace, place.serialize())
+        .then((bool value) => notifyListeners());
+  }
+
+  set frontPlaceBoundaryColor(Color color) {
+    _preferences
+        .setInt(preferencesNames.frontPlaceBoundaryColor, color.value)
+        .then((bool value) => notifyListeners());
+  }
+
+  set backPlaceBoundaryColor(Color color) {
+    _preferences
+        .setInt(preferencesNames.backPlaceBoundaryColor, color.value)
         .then((bool value) => notifyListeners());
   }
 
@@ -121,21 +152,23 @@ class StackedMapsModel extends ChangeNotifier {
     _updateBackMap = true;
   }
 
-  set frontPlaceBoundaryColor(Color color) {
-    _frontPlaceBoundaryColor = color;
+  void switchMaps() {
+    Color copyColor = frontPlaceBoundaryColor;
+    frontPlaceBoundaryColor = backPlaceBoundaryColor;
+    backPlaceBoundaryColor = copyColor;
+
+    Place copyPlace = frontPlace;
+    frontPlace = backPlace;
+    backPlace = copyPlace;
+
     notifyListeners();
   }
 
-  set backPlaceBoundaryColor(Color color) {
-    _backPlaceBoundaryColor = color;
-    notifyListeners();
-  }
-
-  resetUpdateFrontMap() {
+  void resetUpdateFrontMap() {
     _updateFrontMap = false;
   }
 
-  resetUpdateBackMap() {
+  void resetUpdateBackMap() {
     _updateBackMap = false;
   }
 }

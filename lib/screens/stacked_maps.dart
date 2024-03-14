@@ -17,7 +17,8 @@ class StackedMaps extends StatefulWidget {
 }
 
 class _StackedMapsState extends State<StackedMaps> {
-  late double _opacity = Provider.of<StackedMapsModel>(context, listen: false).opacity;
+  late double _opacity =
+      Provider.of<StackedMapsModel>(context, listen: false).opacity;
   late double _zoom = StackedMapsModel.defaultZoom;
 
   GoogleMapController? _frontController;
@@ -187,13 +188,7 @@ class _StackedMapsState extends State<StackedMaps> {
       _frontPlaceMarker = copyPlaceMarker;
     }
 
-    Place copyPlace =
-        Provider.of<StackedMapsModel>(context, listen: false).frontPlace;
-    
-    Provider.of<StackedMapsModel>(context, listen: false).frontPlace =
-        Provider.of<StackedMapsModel>(context, listen: false).backPlace;
-
-    Provider.of<StackedMapsModel>(context, listen: false).backPlace = copyPlace;
+    Provider.of<StackedMapsModel>(context, listen: false).switchMaps();
   }
 
   void setFrontMapBoundary(StackedMapsModel map) async {

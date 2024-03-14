@@ -157,8 +157,8 @@ class _HomeState extends State<Home> {
           if (snapshot.data == null) {
             return const Scaffold();
           }
-          Provider.of<StackedMapsModel>(context, listen: false).preferences =
-              snapshot.data as SharedPreferences;
+          Provider.of<StackedMapsModel>(context, listen: false).initPreferences(
+              snapshot.data as SharedPreferences);
           return Scaffold(
               appBar: AppBar(
                 title: const Text('Overmaps'),
