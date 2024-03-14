@@ -3,8 +3,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:overmaps/models/place.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-const preferencesNames = (
+const literals = (
   showTools: 'showTools',
+  zoom: 'zoom',
   opacity: 'opacity',
   frontPlace: 'frontPlace',
   backPlace: 'backPlace',
@@ -68,9 +69,10 @@ class StackedMapsModel extends ChangeNotifier {
 
   void initPreferences(SharedPreferences data) {
     _preferences = data;
-    if ((_preferences.getString(preferencesNames.frontPlace) ?? 'none') ==
+    if ((_preferences.getString(literals.frontPlace) ?? 'none') ==
         'none') {
       showTools = false;
+      zoom = defaultZoom;
       opacity = initialOpacity;
       frontPlace = _barcelonaPlace;
       backPlace = _sydneyPlace;
@@ -80,39 +82,50 @@ class StackedMapsModel extends ChangeNotifier {
   }
 
   bool get showTools =>
-      _preferences.getBool(preferencesNames.showTools) as bool;
+      _preferences.getBool(literals.showTools) as bool;
+
+  double get zoom =>
+      _preferences.getDouble(literals.zoom) as double;
 
   double get opacity =>
-      _preferences.getDouble(preferencesNames.opacity) as double;
+      _preferences.getDouble(literals.opacity) as double;
 
   Place get frontPlace {
     return Place.deserialize(
-        _preferences.getString(preferencesNames.frontPlace) as String);
+        _preferences.getString(literals.frontPlace) as String);
   }
 
   Place get backPlace {
     return Place.deserialize(
-        _preferences.getString(preferencesNames.backPlace) as String);
+        _preferences.getString(literals.backPlace) as String);
   }
 
   Color get frontPlaceBoundaryColor =>
-      Color(_preferences.getInt(preferencesNames.frontPlaceBoundaryColor) as int);
+      Color(_preferences.getInt(literals.frontPlaceBoundaryColor) as int);
 
   Color get backPlaceBoundaryColor =>
-      Color(_preferences.getInt(preferencesNames.backPlaceBoundaryColor) as int);
+      Color(_preferences.getInt(literals.backPlaceBoundaryColor) as int);
 
   bool get updateFrontMap => _updateFrontMap;
   bool get updateBackMap => _updateBackMap;
 
   set showTools(bool value) {
-    _preferences.setBool(preferencesNames.showTools, value).then((bool value) {
+    _preferences.setBool(literals.showTools, value).then((bool value) {
+      notifyListeners();
+    });
+  }
+
+  set zoom(double value) {
+    _preferences
+        .setDouble(literals.zoom, value)
+        .then((bool value) {
       notifyListeners();
     });
   }
 
   set opacity(double opacity) {
     _preferences
-        .setDouble(preferencesNames.opacity, opacity)
+        .setDouble(literals.opacity, opacity)
         .then((bool value) {
       notifyListeners();
     });
@@ -120,25 +133,25 @@ class StackedMapsModel extends ChangeNotifier {
 
   set frontPlace(Place place) {
     _preferences
-        .setString(preferencesNames.frontPlace, place.serialize())
+        .setString(literals.frontPlace, place.serialize())
         .then((bool value) => notifyListeners());
   }
 
   set backPlace(Place place) {
     _preferences
-        .setString(preferencesNames.backPlace, place.serialize())
+        .setString(literals.backPlace, place.serialize())
         .then((bool value) => notifyListeners());
   }
 
   set frontPlaceBoundaryColor(Color color) {
     _preferences
-        .setInt(preferencesNames.frontPlaceBoundaryColor, color.value)
+        .setInt(literals.frontPlaceBoundaryColor, color.value)
         .then((bool value) => notifyListeners());
   }
 
   set backPlaceBoundaryColor(Color color) {
     _preferences
-        .setInt(preferencesNames.backPlaceBoundaryColor, color.value)
+        .setInt(literals.backPlaceBoundaryColor, color.value)
         .then((bool value) => notifyListeners());
   }
 
@@ -158,8 +171,6 @@ class StackedMapsModel extends ChangeNotifier {
     Place copyPlace = frontPlace;
     frontPlace = backPlace;
     backPlace = copyPlace;
-
-    notifyListeners();
   }
 
   void resetUpdateFrontMap() {

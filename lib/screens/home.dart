@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:overmaps/models/app_model.dart';
 import 'package:overmaps/models/place.dart';
 import 'package:overmaps/models/stacked_maps_model.dart';
 import 'package:overmaps/screens/search_place.dart';
@@ -14,20 +15,21 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  Future<SharedPreferences> preferences = SharedPreferences.getInstance();
+  Future<SharedPreferences> appPreferences = SharedPreferences.getInstance();
+  Future<SharedPreferences> mapsPreferences = SharedPreferences.getInstance();
 
   final IconData showToolsIcon = Icons.arrow_drop_up;
   final IconData hideToolsIcon = Icons.arrow_drop_down;
   final Color _rightBoundaryColor = StackedMapsModel.colorBlue;
   final Color _leftBoundaryColor = StackedMapsModel.colorRed;
   late String _rightName =
-      Provider.of<StackedMapsModel>(context, listen: false).backPlace.name;
+      Provider.of<AppModel>(context, listen: false).rightPlaceName;
   late String _leftName =
-      Provider.of<StackedMapsModel>(context, listen: false).frontPlace.name;
+      Provider.of<AppModel>(context, listen: false).leftPlaceName;
   late IconData _showHideToolsIcon =
       Provider.of<StackedMapsModel>(context, listen: false).showTools
-          ? showToolsIcon
-          : hideToolsIcon;
+          ? hideToolsIcon
+          : showToolsIcon;
 
   get isLeftPlaceInFront =>
       Provider.of<StackedMapsModel>(context, listen: false).opacity <=
@@ -44,42 +46,42 @@ class _HomeState extends State<Home> {
   get leftNameText => Text(isRightPlaceInFront ? _leftName : _rightName);
 
   get toolsRow => Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        SizedBox(
-          height: 24,
-          child: AspectRatio(
-            aspectRatio: 1.0,
-            child: IconButton(
-              onPressed: showHideTools,
-              icon: Icon(_showHideToolsIcon),
-              padding: EdgeInsets.zero,
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          SizedBox(
+            height: 24,
+            child: AspectRatio(
+              aspectRatio: 1.0,
+              child: IconButton(
+                onPressed: showHideTools,
+                icon: Icon(_showHideToolsIcon),
+                padding: EdgeInsets.zero,
+              ),
             ),
           ),
-        ),
-      ],
-    );
+        ],
+      );
 
   get mapNamesRow => Row(children: [
-      IconButton(onPressed: searchLeftPlace, icon: const Icon(Icons.search)),
-      Expanded(
-        child: Column(
-          children: [
-            Align(alignment: rightAlignment, child: rightNameText),
-            Align(alignment: leftAlignment, child: leftNameText),
-          ],
+        IconButton(onPressed: searchLeftPlace, icon: const Icon(Icons.search)),
+        Expanded(
+          child: Column(
+            children: [
+              Align(alignment: rightAlignment, child: rightNameText),
+              Align(alignment: leftAlignment, child: leftNameText),
+            ],
+          ),
         ),
-      ),
-      IconButton(onPressed: searchRightPlace, icon: const Icon(Icons.search)),
-    ]);
+        IconButton(onPressed: searchRightPlace, icon: const Icon(Icons.search)),
+      ]);
 
   get sliderRow => Slider(
-        value: Provider.of<StackedMapsModel>(context, listen: false).opacity,
-        thumbColor: Theme.of(context).colorScheme.secondary,
-        activeColor: const Color.fromARGB(0, 0, 0, 0),
-        inactiveColor: const Color.fromARGB(0, 0, 0, 0),
-        max: 1.0,
-        onChanged: sliderMoved);
+      value: Provider.of<StackedMapsModel>(context, listen: false).opacity,
+      thumbColor: Theme.of(context).colorScheme.secondary,
+      activeColor: const Color.fromARGB(0, 0, 0, 0),
+      inactiveColor: const Color.fromARGB(0, 0, 0, 0),
+      max: 1.0,
+      onChanged: sliderMoved);
 
   void setBackPlace(Place place, Color boundaryColor) {
     Provider.of<StackedMapsModel>(context, listen: false).updateBackMap = true;
@@ -152,13 +154,35 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: preferences,
+        future: Future.wait([
+          appPreferences,
+          mapsPreferences,
+        ]),
         builder: (context, snapshot) {
           if (snapshot.data == null) {
             return const Scaffold();
           }
-          Provider.of<StackedMapsModel>(context, listen: false).initPreferences(
-              snapshot.data as SharedPreferences);
+
+          Provider.of<StackedMapsModel>(context, listen: false)
+              .initPreferences(snapshot.data![0]);
+          Provider.of<AppModel>(context, listen: false)
+              .initPreferences(snapshot.data![1]);
+
+          if (isRightPlaceInFront &&
+              Provider.of<AppModel>(context, listen: false).rightPlaceName !=
+                  Provider.of<StackedMapsModel>(context, listen: false)
+                      .frontPlace
+                      .name) {
+            Provider.of<AppModel>(context, listen: false).rightPlaceName =
+                Provider.of<StackedMapsModel>(context, listen: false)
+                    .frontPlace
+                    .name;
+            Provider.of<AppModel>(context, listen: false).leftPlaceName =
+                Provider.of<StackedMapsModel>(context, listen: false)
+                    .backPlace
+                    .name;
+          }
+
           return Scaffold(
               appBar: AppBar(
                 title: const Text('Overmaps'),

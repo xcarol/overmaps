@@ -19,7 +19,8 @@ class StackedMaps extends StatefulWidget {
 class _StackedMapsState extends State<StackedMaps> {
   late double _opacity =
       Provider.of<StackedMapsModel>(context, listen: false).opacity;
-  late double _zoom = StackedMapsModel.defaultZoom;
+  late double _zoom =
+      Provider.of<StackedMapsModel>(context, listen: false).zoom;
 
   GoogleMapController? _frontController;
   GoogleMapController? _backController;
@@ -55,6 +56,7 @@ class _StackedMapsState extends State<StackedMaps> {
         coordinates: LatLng(map.frontPlace.lat, map.frontPlace.lon),
         boundaries: _frontPlacePolyline,
         markers: _frontPlaceMarker,
+        mapZoom: _zoom,
         onMapCreated: frontMapCreated,
         onCameraMove: frontCameraMove,
       );
@@ -64,6 +66,7 @@ class _StackedMapsState extends State<StackedMaps> {
         coordinates: LatLng(map.backPlace.lat, map.backPlace.lon),
         boundaries: _backPlacePolyline,
         markers: _backPlaceMarker,
+        mapZoom: _zoom,
         onMapCreated: backMapCreated,
         onCameraMove: backCameraMove,
       );
@@ -112,6 +115,8 @@ class _StackedMapsState extends State<StackedMaps> {
     return (CameraPosition position) {
       setState(() {
         _zoom = position.zoom;
+        Provider.of<StackedMapsModel>(context, listen: false).zoom =
+            position.zoom;
         _frontCameraPosition = position;
       });
       OverMap.zoomByCameraPosition(_backController, position);
