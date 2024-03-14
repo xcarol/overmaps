@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:overmaps/models/app_model.dart';
 import 'package:overmaps/screens/home.dart';
 import 'package:overmaps/models/stacked_maps_model.dart';
 import 'package:provider/provider.dart';
 
-void main() => runApp(ChangeNotifierProvider(
-      create: (context) => StackedMapsModel(),
-      child: const MyApp(),
-    ));
+void main() => runApp(const MyApp());
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -20,28 +18,34 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AppModel()),
+        ChangeNotifierProvider(create: (_) => StackedMapsModel()),
       ],
-      supportedLocales: const [
-        Locale('es'),
-        Locale('en'),
-        Locale('ca'),
-      ],
-      theme: ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.light,
+      child: MaterialApp(
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('es'),
+          Locale('en'),
+          Locale('ca'),
+        ],
+        theme: ThemeData(
+          useMaterial3: true,
+          brightness: Brightness.light,
+        ),
+        darkTheme: ThemeData(
+          useMaterial3: true,
+          brightness: Brightness.dark,
+        ),
+        title: 'Overmaps',
+        home: const Home(),
       ),
-      darkTheme: ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.dark,
-      ),
-      title: 'Overmaps',
-      home: const Home(),
     );
   }
 }

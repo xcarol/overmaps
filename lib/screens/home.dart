@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:overmaps/models/app_model.dart';
 import 'package:overmaps/models/place.dart';
 import 'package:overmaps/models/stacked_maps_model.dart';
 import 'package:overmaps/screens/search_place.dart';
@@ -14,31 +15,21 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  @override
-  void initState() {
-    super.initState();
-    _loadPreferences();
-  }
-
-  Future<void> _loadPreferences() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      Provider.of<StackedMapsModel>(context, listen: false).preferences = prefs;
-    });
-  }
+  Future<SharedPreferences> appPreferences = SharedPreferences.getInstance();
+  Future<SharedPreferences> mapsPreferences = SharedPreferences.getInstance();
 
   final IconData showToolsIcon = Icons.arrow_drop_up;
   final IconData hideToolsIcon = Icons.arrow_drop_down;
   final Color _rightBoundaryColor = StackedMapsModel.colorBlue;
   final Color _leftBoundaryColor = StackedMapsModel.colorRed;
   late String _rightName =
-      Provider.of<StackedMapsModel>(context, listen: false).backPlace.name;
+      Provider.of<AppModel>(context, listen: false).rightPlaceName;
   late String _leftName =
-      Provider.of<StackedMapsModel>(context, listen: false).frontPlace.name;
+      Provider.of<AppModel>(context, listen: false).leftPlaceName;
   late IconData _showHideToolsIcon =
       Provider.of<StackedMapsModel>(context, listen: false).showTools
-          ? showToolsIcon
-          : hideToolsIcon;
+          ? hideToolsIcon
+          : showToolsIcon;
 
   get isLeftPlaceInFront =>
       Provider.of<StackedMapsModel>(context, listen: false).opacity <=
@@ -162,19 +153,50 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text('Overmaps'),
-        ),
-        body: const StackedMaps(),
-        persistentFooterButtons: [
-          Column(
-            children: [
-              toolsRow,
-              mapNamesRow,
-              sliderRow,
-            ],
-          )
-        ]);
+    return FutureBuilder(
+        future: Future.wait([
+          appPreferences,
+          mapsPreferences,
+        ]),
+        builder: (context, snapshot) {
+          if (snapshot.data == null) {
+            return const Scaffold();
+          }
+
+          Provider.of<StackedMapsModel>(context, listen: false)
+              .initPreferences(snapshot.data![0]);
+          Provider.of<AppModel>(context, listen: false)
+              .initPreferences(snapshot.data![1]);
+
+          if (isRightPlaceInFront &&
+              Provider.of<AppModel>(context, listen: false).rightPlaceName !=
+                  Provider.of<StackedMapsModel>(context, listen: false)
+                      .frontPlace
+                      .name) {
+            Provider.of<AppModel>(context, listen: false).rightPlaceName =
+                Provider.of<StackedMapsModel>(context, listen: false)
+                    .frontPlace
+                    .name;
+            Provider.of<AppModel>(context, listen: false).leftPlaceName =
+                Provider.of<StackedMapsModel>(context, listen: false)
+                    .backPlace
+                    .name;
+          }
+
+          return Scaffold(
+              appBar: AppBar(
+                title: const Text('Overmaps'),
+              ),
+              body: const StackedMaps(),
+              persistentFooterButtons: [
+                Column(
+                  children: [
+                    toolsRow,
+                    mapNamesRow,
+                    sliderRow,
+                  ],
+                )
+              ]);
+        });
   }
 }

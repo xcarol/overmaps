@@ -8,6 +8,7 @@ import 'package:overmaps/models/stacked_maps_model.dart';
 import 'package:provider/provider.dart';
 import 'package:vertical_slider/vertical_slider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 class StackedMaps extends StatefulWidget {
   const StackedMaps({super.key});
 
@@ -16,8 +17,10 @@ class StackedMaps extends StatefulWidget {
 }
 
 class _StackedMapsState extends State<StackedMaps> {
-  late double _opacity = 0.0;
-  late double _zoom = StackedMapsModel.defaultZoom;
+  late double _opacity =
+      Provider.of<StackedMapsModel>(context, listen: false).opacity;
+  late double _zoom =
+      Provider.of<StackedMapsModel>(context, listen: false).zoom;
 
   GoogleMapController? _frontController;
   GoogleMapController? _backController;
@@ -53,6 +56,7 @@ class _StackedMapsState extends State<StackedMaps> {
         coordinates: LatLng(map.frontPlace.lat, map.frontPlace.lon),
         boundaries: _frontPlacePolyline,
         markers: _frontPlaceMarker,
+        mapZoom: _zoom,
         onMapCreated: frontMapCreated,
         onCameraMove: frontCameraMove,
       );
@@ -62,6 +66,7 @@ class _StackedMapsState extends State<StackedMaps> {
         coordinates: LatLng(map.backPlace.lat, map.backPlace.lon),
         boundaries: _backPlacePolyline,
         markers: _backPlaceMarker,
+        mapZoom: _zoom,
         onMapCreated: backMapCreated,
         onCameraMove: backCameraMove,
       );
@@ -110,6 +115,8 @@ class _StackedMapsState extends State<StackedMaps> {
     return (CameraPosition position) {
       setState(() {
         _zoom = position.zoom;
+        Provider.of<StackedMapsModel>(context, listen: false).zoom =
+            position.zoom;
         _frontCameraPosition = position;
       });
       OverMap.zoomByCameraPosition(_backController, position);
@@ -174,13 +181,19 @@ class _StackedMapsState extends State<StackedMaps> {
     OverMap.setCameraPosition(_frontController, _frontCameraPosition);
     OverMap.setCameraPosition(_backController, _backCameraPosition);
 
-    Set<Polyline>? copyPlacePolyline = _backPlacePolyline;
-    _backPlacePolyline = _frontPlacePolyline;
-    _frontPlacePolyline = copyPlacePolyline;
+    if (_backPlacePolyline.isNotEmpty) {
+      Set<Polyline>? copyPlacePolyline = _backPlacePolyline;
+      _backPlacePolyline = _frontPlacePolyline;
+      _frontPlacePolyline = copyPlacePolyline;
+    }
 
-    Set<Marker>? copyPlaceMarker = _backPlaceMarker;
-    _backPlaceMarker = _frontPlaceMarker;
-    _frontPlaceMarker = copyPlaceMarker;
+    if (_backPlaceMarker.isNotEmpty) {
+      Set<Marker>? copyPlaceMarker = _backPlaceMarker;
+      _backPlaceMarker = _frontPlaceMarker;
+      _frontPlaceMarker = copyPlaceMarker;
+    }
+
+    Provider.of<StackedMapsModel>(context, listen: false).switchMaps();
   }
 
   void setFrontMapBoundary(StackedMapsModel map) async {
@@ -189,7 +202,8 @@ class _StackedMapsState extends State<StackedMaps> {
       StackedMapsModel.frontPlacePolylineId,
       map.frontPlaceBoundaryColor,
     ).catchError((error) {
-      SnackMessage.autoHideSnackBar(context, AppLocalizations.of(context)!.errorRetrieveBoundaries);
+      SnackMessage.autoHideSnackBar(
+          context, AppLocalizations.of(context)!.errorRetrieveBoundaries);
       return [] as Future<Set<Polyline>>;
     });
     setState(() {
@@ -203,7 +217,8 @@ class _StackedMapsState extends State<StackedMaps> {
       StackedMapsModel.backPlacePolylineId,
       map.backPlaceBoundaryColor,
     ).catchError((error) {
-      SnackMessage.autoHideSnackBar(context, AppLocalizations.of(context)!.errorRetrieveBoundaries);
+      SnackMessage.autoHideSnackBar(
+          context, AppLocalizations.of(context)!.errorRetrieveBoundaries);
       return [] as Future<Set<Polyline>>;
     });
     setState(() {

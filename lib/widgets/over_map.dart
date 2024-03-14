@@ -9,6 +9,7 @@ class OverMap extends StatefulWidget {
   final LatLng coordinates;
   final Set<Polyline> boundaries;
   final Set<Marker> markers;
+  final double mapZoom;
   final Function onCameraMove, onMapCreated;
 
   const OverMap({
@@ -17,6 +18,7 @@ class OverMap extends StatefulWidget {
     required this.coordinates,
     required this.boundaries,
     required this.markers,
+    required this.mapZoom,
     required this.onMapCreated,
     required this.onCameraMove,
   });
@@ -71,7 +73,7 @@ class _OverMapState extends State<OverMap> {
             ']',
         initialCameraPosition: CameraPosition(
           target: widget.coordinates,
-          zoom: StackedMapsModel.defaultZoom,
+          zoom: widget.mapZoom,
         ),
       );
 
