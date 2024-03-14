@@ -80,7 +80,7 @@ class StackedMapsModel extends ChangeNotifier {
   }
 
   bool get showTools =>
-      _preferences.getBool(preferencesNames.showTools) ?? false;
+      _preferences.getBool(preferencesNames.showTools) as bool;
 
   double get opacity =>
       _preferences.getDouble(preferencesNames.opacity) as double;
@@ -96,12 +96,10 @@ class StackedMapsModel extends ChangeNotifier {
   }
 
   Color get frontPlaceBoundaryColor =>
-      Color(_preferences.getInt(preferencesNames.frontPlaceBoundaryColor) ??
-          colorRed.value);
+      Color(_preferences.getInt(preferencesNames.frontPlaceBoundaryColor) as int);
 
   Color get backPlaceBoundaryColor =>
-      Color(_preferences.getInt(preferencesNames.backPlaceBoundaryColor) ??
-          colorBlue.value);
+      Color(_preferences.getInt(preferencesNames.backPlaceBoundaryColor) as int);
 
   bool get updateFrontMap => _updateFrontMap;
   bool get updateBackMap => _updateBackMap;
