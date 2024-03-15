@@ -196,20 +196,22 @@ class _HomeState extends State<Home> {
                     .name;
           }
 
+          List<Widget> footerRows = [
+            toolsRow,
+          ];
+
+          if (Provider.of<StackedMapsModel>(context, listen: false).showTools ==
+              false) {
+            footerRows.add(mapNamesRow);
+            footerRows.add(sliderRow);
+          }
+
           return Scaffold(
               appBar: AppBar(
                 title: const Text('Overmaps'),
               ),
               body: const StackedMaps(),
-              persistentFooterButtons: [
-                Column(
-                  children: [
-                    toolsRow,
-                    mapNamesRow,
-                    sliderRow,
-                  ],
-                )
-              ]);
+              persistentFooterButtons: [Column(children: footerRows)]);
         });
   }
 }
