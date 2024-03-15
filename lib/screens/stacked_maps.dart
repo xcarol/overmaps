@@ -42,6 +42,8 @@ class _StackedMapsState extends State<StackedMaps> {
         value: _zoom,
         min: StackedMapsModel.minZoom,
         max: StackedMapsModel.maxZoom,
+        label: (((_zoom) * 100) / StackedMapsModel.maxZoom).round().toString(),
+        divisions: StackedMapsModel.maxZoom.toInt() * 100,
         onChanged: (double value) {
           setState(() {
             _zoom = value;

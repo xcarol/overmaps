@@ -42,8 +42,14 @@ class _HomeState extends State<Home> {
       isRightPlaceInFront ? Alignment.topRight : Alignment.topLeft;
   get leftAlignment =>
       isRightPlaceInFront ? Alignment.bottomLeft : Alignment.bottomRight;
-  get rightNameText => Text(isRightPlaceInFront ? _rightName : _leftName);
-  get leftNameText => Text(isRightPlaceInFront ? _leftName : _rightName);
+  get rightNameText => Text(
+        isRightPlaceInFront ? _rightName : _leftName,
+        overflow: TextOverflow.ellipsis,
+      );
+  get leftNameText => Text(
+        isRightPlaceInFront ? _leftName : _rightName,
+        overflow: TextOverflow.ellipsis,
+      );
 
   get toolsRow => Row(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -78,9 +84,16 @@ class _HomeState extends State<Home> {
   get sliderRow => Slider(
       value: Provider.of<StackedMapsModel>(context, listen: false).opacity,
       thumbColor: Theme.of(context).colorScheme.secondary,
-      activeColor: const Color.fromARGB(0, 0, 0, 0),
-      inactiveColor: const Color.fromARGB(0, 0, 0, 0),
+      activeColor: Theme.of(context).colorScheme.secondary,
+      inactiveColor: Theme.of(context).colorScheme.secondary,
+      label:
+          (Provider.of<StackedMapsModel>(context, listen: false).opacity * 200 -
+                  100)
+              .round()
+              .abs()
+              .toString(),
       max: 1.0,
+      divisions: 100,
       onChanged: sliderMoved);
 
   void setBackPlace(Place place, Color boundaryColor) {
@@ -183,20 +196,22 @@ class _HomeState extends State<Home> {
                     .name;
           }
 
+          List<Widget> footerRows = [
+            toolsRow,
+          ];
+
+          if (Provider.of<StackedMapsModel>(context, listen: false).showTools ==
+              false) {
+            footerRows.add(mapNamesRow);
+            footerRows.add(sliderRow);
+          }
+
           return Scaffold(
               appBar: AppBar(
                 title: const Text('Overmaps'),
               ),
               body: const StackedMaps(),
-              persistentFooterButtons: [
-                Column(
-                  children: [
-                    toolsRow,
-                    mapNamesRow,
-                    sliderRow,
-                  ],
-                )
-              ]);
+              persistentFooterButtons: [Column(children: footerRows)]);
         });
   }
 }
