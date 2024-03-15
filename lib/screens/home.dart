@@ -84,9 +84,16 @@ class _HomeState extends State<Home> {
   get sliderRow => Slider(
       value: Provider.of<StackedMapsModel>(context, listen: false).opacity,
       thumbColor: Theme.of(context).colorScheme.secondary,
-      activeColor: const Color.fromARGB(0, 0, 0, 0),
-      inactiveColor: const Color.fromARGB(0, 0, 0, 0),
+      activeColor: Theme.of(context).colorScheme.secondary,
+      inactiveColor: Theme.of(context).colorScheme.secondary,
+      label:
+          (Provider.of<StackedMapsModel>(context, listen: false).opacity * 200 -
+                  100)
+              .round()
+              .abs()
+              .toString(),
       max: 1.0,
+      divisions: 100,
       onChanged: sliderMoved);
 
   void setBackPlace(Place place, Color boundaryColor) {
