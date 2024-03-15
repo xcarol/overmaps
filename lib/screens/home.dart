@@ -42,8 +42,14 @@ class _HomeState extends State<Home> {
       isRightPlaceInFront ? Alignment.topRight : Alignment.topLeft;
   get leftAlignment =>
       isRightPlaceInFront ? Alignment.bottomLeft : Alignment.bottomRight;
-  get rightNameText => Text(isRightPlaceInFront ? _rightName : _leftName);
-  get leftNameText => Text(isRightPlaceInFront ? _leftName : _rightName);
+  get rightNameText => Text(
+        isRightPlaceInFront ? _rightName : _leftName,
+        overflow: TextOverflow.ellipsis,
+      );
+  get leftNameText => Text(
+        isRightPlaceInFront ? _leftName : _rightName,
+        overflow: TextOverflow.ellipsis,
+      );
 
   get toolsRow => Row(
         mainAxisAlignment: MainAxisAlignment.end,
