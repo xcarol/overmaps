@@ -1,6 +1,29 @@
 # Overmaps
 
-Visually compare locations using Google Maps
+**Explore two locations concurrently with transparent map overlays.**  
+
+Discover a new dimension of exploration with Overmaps, an app that redefines the way you compare and analyse two different locations using Google Maps. With the unique ability to overlay two maps with transparency, Overmaps empowers you to delve into intricate details seamlessly. Here are the key features:  
+
+- Search Different Locations:
+    Use the search bar to input addresses or names of locations you want to explore.
+    Find and select two distinct areas for a comprehensive comparison.
+
+- Map Overlay:
+    Once you've chosen the locations, effortlessly overlay them.
+    Fine-tune transparency using an intuitive control slider for a detailed view of each location.
+
+- Individual Rotation:
+    Customize the perspective of each location with individual rotation option.
+    Rotate and adjust the angle of each map to achieve the best visualization.
+
+- Maintained Zoom:
+    Apply desired zoom to one location, and watch it seamlessly transition to the other map.
+    Simplifies the comparison of details and features between two geographic areas.
+
+- Easy Navigation:
+    Navigate smoothly between the two locations with a simple toggle or interface gesture.
+
+Overmaps provides a fresh and innovative way to gain insights into two locations simultaneously, aiding decision-making and in-depth geographical analysis. Download our app today and embark on a unique exploration experience!
 
 ## Google Maps Key
 
