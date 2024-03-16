@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:overmaps/helpers/snack_bar.dart';
 import 'package:overmaps/models/place.dart';
@@ -38,20 +39,32 @@ class _StackedMapsState extends State<StackedMaps> {
     target: StackedMapsModel.sydneyLocation,
   );
 
-  get tools => VerticalSlider(
-        value: _zoom,
-        min: StackedMapsModel.minZoom,
-        max: StackedMapsModel.maxZoom,
-        label: (((_zoom) * 100) / StackedMapsModel.maxZoom).round().toString(),
-        divisions: StackedMapsModel.maxZoom.toInt() * 100,
-        onChanged: (double value) {
-          setState(() {
-            _zoom = value;
-          });
-          OverMap.zoom(_frontController, _zoom);
-          OverMap.zoom(_backController, _zoom);
-        },
-      );
+  get tools => Opacity(
+      opacity: 1.0,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          const Expanded(child: Row()),
+          VerticalSlider(
+            value: _zoom,
+            min: StackedMapsModel.minZoom,
+            max: StackedMapsModel.maxZoom,
+            thumbColor: Theme.of(context).colorScheme.inversePrimary,
+            activeColor: Theme.of(context).colorScheme.secondary,
+            inactiveColor: Theme.of(context).colorScheme.secondary,
+            label:
+                (((_zoom) * 100) / StackedMapsModel.maxZoom).round().toString(),
+            divisions: StackedMapsModel.maxZoom.toInt() * 100,
+            onChanged: (double value) {
+              setState(() {
+                _zoom = value;
+              });
+              OverMap.zoom(_frontController, _zoom);
+              OverMap.zoom(_backController, _zoom);
+            },
+          )
+        ],
+      ));
 
   frontMap(StackedMapsModel map) => OverMap(
         place: map.frontPlace.name,
@@ -317,22 +330,24 @@ class _StackedMapsState extends State<StackedMaps> {
 
       _opacity = stackedMap.opacity;
 
-      List<Widget> children = [
-        Expanded(
-          child: Stack(
-            children: stackedMaps(
-              frontMap(stackedMap),
-              backMap(stackedMap),
-            ),
-          ),
-        ),
-      ];
+      List<Widget> children = stackedMaps(
+        frontMap(stackedMap),
+        backMap(stackedMap),
+      );
 
       if (stackedMap.showTools == true) {
         children.add(tools);
       }
+
       return Row(
-        children: children,
+        children: [
+          Expanded(
+            child: Stack(
+              alignment: Alignment.centerRight,
+              children: children,
+            ),
+          )
+        ],
       );
     });
   }
