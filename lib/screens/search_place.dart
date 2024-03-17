@@ -42,7 +42,8 @@ class _SearchPlaceState extends State<SearchPlace> {
 
   void inputChanged(String value) async {
     final places = await _service.searchPlaces(value).catchError((error) {
-      SnackMessage.autoHideSnackBar(context, AppLocalizations.of(context)!.errorSearchPlaces);
+      SnackMessage.autoHideSnackBar(
+          context, AppLocalizations.of(context)!.errorSearchPlaces);
       return [] as Future<dynamic>;
     });
     setPlacesListItems(places);

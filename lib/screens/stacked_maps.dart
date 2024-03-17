@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:overmaps/helpers/snack_bar.dart';
 import 'package:overmaps/models/place.dart';
 import 'package:overmaps/services/places_service.dart';
+import 'package:overmaps/widgets/opacity_slider.dart';
 import 'package:overmaps/widgets/over_map.dart';
 import 'package:overmaps/models/stacked_maps_model.dart';
+import 'package:overmaps/widgets/tilt_slider.dart';
+import 'package:overmaps/widgets/zoom_slider.dart';
 import 'package:provider/provider.dart';
-import 'package:vertical_slider/vertical_slider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class StackedMaps extends StatefulWidget {
@@ -22,6 +23,8 @@ class _StackedMapsState extends State<StackedMaps> {
       Provider.of<StackedMapsModel>(context, listen: false).opacity;
   late double _zoom =
       Provider.of<StackedMapsModel>(context, listen: false).zoom;
+  late double _tilt =
+      Provider.of<StackedMapsModel>(context, listen: false).tilt;
 
   GoogleMapController? _frontController;
   GoogleMapController? _backController;
@@ -42,27 +45,48 @@ class _StackedMapsState extends State<StackedMaps> {
   get tools => Opacity(
       opacity: 1.0,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          const Expanded(child: Row()),
-          VerticalSlider(
-            value: _zoom,
-            min: StackedMapsModel.minZoom,
-            max: StackedMapsModel.maxZoom,
-            thumbColor: Theme.of(context).colorScheme.inversePrimary,
-            activeColor: Theme.of(context).colorScheme.secondary,
-            inactiveColor: Theme.of(context).colorScheme.secondary,
-            label:
-                (((_zoom) * 100) / StackedMapsModel.maxZoom).round().toString(),
-            divisions: StackedMapsModel.maxZoom.toInt() * 100,
-            onChanged: (double value) {
+          TiltSlider(
+            Provider.of<StackedMapsModel>(context, listen: false),
+            context,
+            (double tilt) {
               setState(() {
-                _zoom = value;
+                Provider.of<StackedMapsModel>(context, listen: false).tilt =
+                    tilt;
+                _tilt = tilt;
+              });
+              OverMap.tilt(_frontController, _frontCameraPosition, _tilt);
+              OverMap.tilt(_backController, _backCameraPosition, _tilt);
+            },
+          ),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                OpacitySlider(
+                    Provider.of<StackedMapsModel>(context, listen: false),
+                    context, (double opacity) {
+                  setState(() {
+                    Provider.of<StackedMapsModel>(context, listen: false)
+                        .opacity = opacity;
+                  });
+                }),
+              ],
+            ),
+          ),
+          ZoomSlider(
+            Provider.of<StackedMapsModel>(context, listen: false),
+            context,
+            (double zoom) {
+              setState(() {
+                Provider.of<StackedMapsModel>(context, listen: false).zoom =
+                    zoom;
+                _zoom = zoom;
               });
               OverMap.zoom(_frontController, _zoom);
               OverMap.zoom(_backController, _zoom);
             },
-          )
+          ),
         ],
       ));
 
@@ -72,6 +96,7 @@ class _StackedMapsState extends State<StackedMaps> {
         boundaries: _frontPlacePolyline,
         markers: _frontPlaceMarker,
         mapZoom: _zoom,
+        mapTilt: _tilt,
         onMapCreated: frontMapCreated,
         onCameraMove: frontCameraMove,
       );
@@ -82,6 +107,7 @@ class _StackedMapsState extends State<StackedMaps> {
         boundaries: _backPlacePolyline,
         markers: _backPlaceMarker,
         mapZoom: _zoom,
+        mapTilt: _tilt,
         onMapCreated: backMapCreated,
         onCameraMove: backCameraMove,
       );
@@ -129,7 +155,6 @@ class _StackedMapsState extends State<StackedMaps> {
   Function get frontCameraMove {
     return (CameraPosition position) {
       setState(() {
-        _zoom = position.zoom;
         Provider.of<StackedMapsModel>(context, listen: false).zoom =
             position.zoom;
         _frontCameraPosition = position;
@@ -212,6 +237,13 @@ class _StackedMapsState extends State<StackedMaps> {
   }
 
   void setFrontMapBoundary(StackedMapsModel map) async {
+    _frontPlacePolyline = <Polyline>{
+      Polyline(
+        polylineId: StackedMapsModel.frontPlacePolylineId,
+        points: const <LatLng>[],
+      ),
+    };
+
     Set<Polyline> boundary = await getMapBoundary(
       map.frontPlace,
       StackedMapsModel.frontPlacePolylineId,
@@ -219,7 +251,7 @@ class _StackedMapsState extends State<StackedMaps> {
     ).catchError((error) {
       SnackMessage.autoHideSnackBar(
           context, AppLocalizations.of(context)!.errorRetrieveBoundaries);
-      return [] as Future<Set<Polyline>>;
+      return Future(() => _frontPlacePolyline);
     });
     setState(() {
       _frontPlacePolyline = boundary;
@@ -227,6 +259,13 @@ class _StackedMapsState extends State<StackedMaps> {
   }
 
   void setBackMapBoundary(StackedMapsModel map) async {
+    _backPlacePolyline = <Polyline>{
+      Polyline(
+        polylineId: StackedMapsModel.backPlacePolylineId,
+        points: const <LatLng>[],
+      ),
+    };
+
     Set<Polyline> boundary = await getMapBoundary(
       map.backPlace,
       StackedMapsModel.backPlacePolylineId,
@@ -234,7 +273,7 @@ class _StackedMapsState extends State<StackedMaps> {
     ).catchError((error) {
       SnackMessage.autoHideSnackBar(
           context, AppLocalizations.of(context)!.errorRetrieveBoundaries);
-      return [] as Future<Set<Polyline>>;
+      return Future(() => _backPlacePolyline);
     });
     setState(() {
       _backPlacePolyline = boundary;

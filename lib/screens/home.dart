@@ -4,6 +4,7 @@ import 'package:overmaps/models/place.dart';
 import 'package:overmaps/models/stacked_maps_model.dart';
 import 'package:overmaps/screens/search_place.dart';
 import 'package:overmaps/screens/stacked_maps.dart';
+import 'package:overmaps/widgets/opacity_slider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -81,20 +82,10 @@ class _HomeState extends State<Home> {
         IconButton(onPressed: searchRightPlace, icon: const Icon(Icons.search)),
       ]);
 
-  get sliderRow => Slider(
-      value: Provider.of<StackedMapsModel>(context, listen: false).opacity,
-      thumbColor: Theme.of(context).colorScheme.inversePrimary,
-      activeColor: Theme.of(context).colorScheme.secondary,
-      inactiveColor: Theme.of(context).colorScheme.secondary,
-      label:
-          (Provider.of<StackedMapsModel>(context, listen: false).opacity * 200 -
-                  100)
-              .round()
-              .abs()
-              .toString(),
-      max: 1.0,
-      divisions: 100,
-      onChanged: sliderMoved);
+  get sliderRow => OpacitySlider(
+      Provider.of<StackedMapsModel>(context, listen: false),
+      context,
+      sliderMoved);
 
   void setBackPlace(Place place, Color boundaryColor) {
     Provider.of<StackedMapsModel>(context, listen: false).updateBackMap = true;
