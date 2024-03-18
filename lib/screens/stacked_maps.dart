@@ -3,6 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:overmaps/helpers/snack_bar.dart';
 import 'package:overmaps/models/place.dart';
 import 'package:overmaps/services/places_service.dart';
+import 'package:overmaps/widgets/bearing_slider.dart';
 import 'package:overmaps/widgets/opacity_slider.dart';
 import 'package:overmaps/widgets/over_map.dart';
 import 'package:overmaps/models/stacked_maps_model.dart';
@@ -25,6 +26,8 @@ class _StackedMapsState extends State<StackedMaps> {
       Provider.of<StackedMapsModel>(context, listen: false).zoom;
   late double _tilt =
       Provider.of<StackedMapsModel>(context, listen: false).tilt;
+  late double _bearing =
+      Provider.of<StackedMapsModel>(context, listen: false).bearing;
 
   GoogleMapController? _frontController;
   GoogleMapController? _backController;
@@ -61,8 +64,21 @@ class _StackedMapsState extends State<StackedMaps> {
           ),
           Expanded(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                BearingSlider(
+                    Provider.of<StackedMapsModel>(context, listen: false),
+                    context, (double bearing) {
+                  setState(() {
+                    Provider.of<StackedMapsModel>(context, listen: false)
+                        .bearing = bearing;
+                    _bearing = bearing;
+                  });
+                  OverMap.bearing(
+                      _frontController, _frontCameraPosition, _bearing);
+                  OverMap.bearing(
+                      _backController, _backCameraPosition, _bearing);
+                }),
                 OpacitySlider(
                     Provider.of<StackedMapsModel>(context, listen: false),
                     context, (double opacity) {
@@ -97,6 +113,7 @@ class _StackedMapsState extends State<StackedMaps> {
         markers: _frontPlaceMarker,
         mapZoom: _zoom,
         mapTilt: _tilt,
+        mapBearing: _bearing,
         onMapCreated: frontMapCreated,
         onCameraMove: frontCameraMove,
       );
@@ -108,6 +125,7 @@ class _StackedMapsState extends State<StackedMaps> {
         markers: _backPlaceMarker,
         mapZoom: _zoom,
         mapTilt: _tilt,
+        mapBearing: _bearing,
         onMapCreated: backMapCreated,
         onCameraMove: backCameraMove,
       );

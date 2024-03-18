@@ -7,6 +7,7 @@ const literals = (
   showTools: 'showTools',
   zoom: 'zoom',
   tilt: 'tilt',
+  bearing: 'bearing',
   opacity: 'opacity',
   frontPlace: 'frontPlace',
   backPlace: 'backPlace',
@@ -28,6 +29,7 @@ class StackedMapsModel extends ChangeNotifier {
   static Color colorBlue = Colors.blue;
   static Color colorRed = Colors.red;
   static double defaultZoom = 11.0;
+  static double defaultBearing = 0.0;
   static double defaultTilt = 0.0;
   static double halfOpacity = 0.5;
   static double initialOpacity = 0.3;
@@ -73,14 +75,31 @@ class StackedMapsModel extends ChangeNotifier {
 
   void initPreferences(SharedPreferences data) {
     _preferences = data;
-    if ((_preferences.getString(literals.frontPlace) ?? 'none') == 'none') {
+    if (_preferences.getBool(literals.showTools) == null) {
       showTools = false;
+    }
+    if (_preferences.getDouble(literals.zoom) == null) {
       zoom = defaultZoom;
+    }
+    if (_preferences.getDouble(literals.tilt) == null) {
       tilt = defaultTilt;
+    }
+    if (_preferences.getDouble(literals.bearing) == null) {
+      bearing = defaultBearing;
+    }
+    if (_preferences.getDouble(literals.opacity) == null) {
       opacity = initialOpacity;
+    }
+    if (_preferences.getString(literals.frontPlace) == null) {
       frontPlace = _barcelonaPlace;
+    }
+    if (_preferences.getString(literals.backPlace) == null) {
       backPlace = _sydneyPlace;
+    }
+    if (_preferences.getInt(literals.frontPlaceBoundaryColor) == null) {
       frontPlaceBoundaryColor = colorRed;
+    }
+    if (_preferences.getInt(literals.backPlaceBoundaryColor) == null) {
       backPlaceBoundaryColor = colorBlue;
     }
   }
@@ -90,6 +109,8 @@ class StackedMapsModel extends ChangeNotifier {
   double get zoom => _preferences.getDouble(literals.zoom) as double;
 
   double get tilt => _preferences.getDouble(literals.tilt) as double;
+
+  double get bearing => _preferences.getDouble(literals.bearing) as double;
 
   double get opacity => _preferences.getDouble(literals.opacity) as double;
 
@@ -120,6 +141,12 @@ class StackedMapsModel extends ChangeNotifier {
 
   set zoom(double value) {
     _preferences.setDouble(literals.zoom, value).then((bool value) {
+      notifyListeners();
+    });
+  }
+
+  set bearing(double value) {
+    _preferences.setDouble(literals.bearing, value).then((bool value) {
       notifyListeners();
     });
   }
