@@ -9,6 +9,8 @@ class OverMap extends StatefulWidget {
   final Set<Polyline> boundaries;
   final Set<Marker> markers;
   final double mapZoom;
+  final double mapTilt;
+  final double mapBearing;
   final Function onCameraMove, onMapCreated;
 
   const OverMap({
@@ -18,12 +20,34 @@ class OverMap extends StatefulWidget {
     required this.boundaries,
     required this.markers,
     required this.mapZoom,
+    required this.mapTilt,
+    required this.mapBearing,
     required this.onMapCreated,
     required this.onCameraMove,
   });
 
   @override
   State createState() => _OverMapState();
+
+  static bearing(GoogleMapController? controller, CameraPosition cameraPosition,
+      double newBearing) {
+    controller?.moveCamera(CameraUpdate.newCameraPosition(CameraPosition(
+      target: cameraPosition.target,
+      tilt: cameraPosition.tilt,
+      zoom: cameraPosition.zoom,
+      bearing: newBearing,
+    )));
+  }
+
+  static tilt(GoogleMapController? controller, CameraPosition cameraPosition,
+      double newTilt) {
+    controller?.moveCamera(CameraUpdate.newCameraPosition(CameraPosition(
+      target: cameraPosition.target,
+      tilt: newTilt,
+      zoom: cameraPosition.zoom,
+      bearing: cameraPosition.bearing,
+    )));
+  }
 
   static zoom(GoogleMapController? controller, double newZoom) {
     controller?.getZoomLevel().then((zoom) => {
@@ -73,6 +97,8 @@ class _OverMapState extends State<OverMap> {
         initialCameraPosition: CameraPosition(
           target: widget.coordinates,
           zoom: widget.mapZoom,
+          tilt: widget.mapTilt,
+          bearing: widget.mapBearing,
         ),
       );
 

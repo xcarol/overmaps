@@ -12,8 +12,7 @@ class AppModel extends ChangeNotifier {
 
   void initPreferences(SharedPreferences data) {
     _preferences = data;
-    if ((_preferences.getString(literals.leftPlaceName) ?? 'none') ==
-        'none') {
+    if ((_preferences.getString(literals.leftPlaceName) ?? 'none') == 'none') {
       leftPlaceName = StackedMapsModel.barcelonaName;
       rightPlaceName = StackedMapsModel.sydneyName;
     }

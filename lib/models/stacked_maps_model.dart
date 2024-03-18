@@ -6,6 +6,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 const literals = (
   showTools: 'showTools',
   zoom: 'zoom',
+  tilt: 'tilt',
+  bearing: 'bearing',
   opacity: 'opacity',
   frontPlace: 'frontPlace',
   backPlace: 'backPlace',
@@ -27,11 +29,15 @@ class StackedMapsModel extends ChangeNotifier {
   static Color colorBlue = Colors.blue;
   static Color colorRed = Colors.red;
   static double defaultZoom = 11.0;
+  static double defaultBearing = 0.0;
+  static double defaultTilt = 0.0;
   static double halfOpacity = 0.5;
   static double initialOpacity = 0.3;
   static double opaque = 1.0;
   static double minZoom = 2.0;
   static double maxZoom = 21.0;
+  static double minTilt = 0.0;
+  static double maxTilt = 65.0;
 
   static PolylineId frontPlacePolylineId = const PolylineId(
     'frontPlacePolylineId',
@@ -69,26 +75,44 @@ class StackedMapsModel extends ChangeNotifier {
 
   void initPreferences(SharedPreferences data) {
     _preferences = data;
-    if ((_preferences.getString(literals.frontPlace) ?? 'none') ==
-        'none') {
+    if (_preferences.getBool(literals.showTools) == null) {
       showTools = false;
+    }
+    if (_preferences.getDouble(literals.zoom) == null) {
       zoom = defaultZoom;
+    }
+    if (_preferences.getDouble(literals.tilt) == null) {
+      tilt = defaultTilt;
+    }
+    if (_preferences.getDouble(literals.bearing) == null) {
+      bearing = defaultBearing;
+    }
+    if (_preferences.getDouble(literals.opacity) == null) {
       opacity = initialOpacity;
+    }
+    if (_preferences.getString(literals.frontPlace) == null) {
       frontPlace = _barcelonaPlace;
+    }
+    if (_preferences.getString(literals.backPlace) == null) {
       backPlace = _sydneyPlace;
+    }
+    if (_preferences.getInt(literals.frontPlaceBoundaryColor) == null) {
       frontPlaceBoundaryColor = colorRed;
+    }
+    if (_preferences.getInt(literals.backPlaceBoundaryColor) == null) {
       backPlaceBoundaryColor = colorBlue;
     }
   }
 
-  bool get showTools =>
-      _preferences.getBool(literals.showTools) as bool;
+  bool get showTools => _preferences.getBool(literals.showTools) as bool;
 
-  double get zoom =>
-      _preferences.getDouble(literals.zoom) as double;
+  double get zoom => _preferences.getDouble(literals.zoom) as double;
 
-  double get opacity =>
-      _preferences.getDouble(literals.opacity) as double;
+  double get tilt => _preferences.getDouble(literals.tilt) as double;
+
+  double get bearing => _preferences.getDouble(literals.bearing) as double;
+
+  double get opacity => _preferences.getDouble(literals.opacity) as double;
 
   Place get frontPlace {
     return Place.deserialize(
@@ -116,17 +140,25 @@ class StackedMapsModel extends ChangeNotifier {
   }
 
   set zoom(double value) {
-    _preferences
-        .setDouble(literals.zoom, value)
-        .then((bool value) {
+    _preferences.setDouble(literals.zoom, value).then((bool value) {
+      notifyListeners();
+    });
+  }
+
+  set bearing(double value) {
+    _preferences.setDouble(literals.bearing, value).then((bool value) {
+      notifyListeners();
+    });
+  }
+
+  set tilt(double value) {
+    _preferences.setDouble(literals.tilt, value).then((bool value) {
       notifyListeners();
     });
   }
 
   set opacity(double opacity) {
-    _preferences
-        .setDouble(literals.opacity, opacity)
-        .then((bool value) {
+    _preferences.setDouble(literals.opacity, opacity).then((bool value) {
       notifyListeners();
     });
   }
