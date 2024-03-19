@@ -130,4 +130,4 @@ The keystore (and password) used for the app signing is at the Bitwarden vault. 
 
 Modify the last (build) number in _version: 1.0.0+**X**_ at the _pubspec.yaml_ file before building the new .aab bundle.
 
-The build the bundle (as explained above) and go to: [Create an internal test version](https://play.google.com/console/u/0/developers/5602401961225582177/app/4974106073607129188/tracks/4701415689677472096/releases/7/prepare) to upload it.
+Then build the bundle (as explained above) and go to: [Create an internal test version](https://play.google.com/console/u/0/developers/5602401961225582177/app/4974106073607129188/tracks/4701415689677472096/releases/7/prepare) to upload it.
