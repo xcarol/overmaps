@@ -30,6 +30,28 @@ Overmaps provides a fresh and innovative way to gain insights into two locations
 Set _MAPS_API_KEY_ environment variable at _./android/secrets.properties_  for the android app  
 Set _--dart-define=MAPS_API_KEY=key_ when running _flutter_
 
+## Crashlytics
+
+Got configuration steps from _https://firebase.google.com/docs/crashlytics/get-started?platform=flutter_  
+
+First login to Firebase  
+
+    firebase login
+
+Then run
+
+    flutterfire configure
+
+and select  
+
+✔ Select a Firebase project to configure your Flutter application with · overmap-1503847389383 (Overmaps)  
+✔ Which platforms should your configuration support (use arrow keys & space to select)? · android, web  
+
+to generate the files  
+
+    google-services.json
+    firebase_options.dart
+
 ### VSCODE
 
 Set in _.vscode/launch.json_
