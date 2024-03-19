@@ -128,6 +128,8 @@ The keystore (and password) used for the app signing is at the Bitwarden vault. 
 
 ### Publishing a new version for internal test
 
-Modify the last (build) number in _version: 1.0.0+**X**_ at the _pubspec.yaml_ file before building the new .aab bundle.
+- Modify the last (build) number in _version: 1.0.0+**X**_ at the _pubspec.yaml_ file before building the new .aab bundle.
 
-Then build the bundle (as explained above) and go to: [Create an internal test version](https://play.google.com/console/u/0/developers/5602401961225582177/app/4974106073607129188/tracks/4701415689677472096/releases/7/prepare) to upload it.
+- Build the bundle (as explained above): `flutter build appbundle --release --dart-define=MAPS_API_KEY=key`
+
+- Go to: [Create an internal test version](https://play.google.com/console/u/0/developers/5602401961225582177/app/4974106073607129188/tracks/4701415689677472096/releases/7/prepare) to upload it.
