@@ -14,17 +14,17 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  
+
   FlutterError.onError = (errorDetails) {
     FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
   };
-  
+
   // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
   PlatformDispatcher.instance.onError = (error, stack) {
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
     return true;
   };
-  
+
   runApp(const MyApp());
 }
 
@@ -58,10 +58,12 @@ class _MyAppState extends State {
         theme: ThemeData(
           useMaterial3: true,
           brightness: Brightness.light,
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
         ),
         darkTheme: ThemeData(
           useMaterial3: true,
           brightness: Brightness.dark,
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey, brightness: Brightness.dark),
         ),
         title: 'Overmaps',
         home: const Home(),
