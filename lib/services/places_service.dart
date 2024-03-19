@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/material.dart';
 import 'package:overmaps/models/place.dart';
 import 'package:xml/xml.dart';
 import 'package:http/http.dart' as http;
@@ -13,24 +15,33 @@ class PlacesService {
   Future<dynamic> searchPlaces(
     String search,
   ) async {
-    final response = await http.get(Uri.parse(
+    Uri searchPlaceUri = Uri.parse(
       _osmSearchPlace.replaceFirst('{SEARCH}', search),
-    ));
+    );
+    final response = await http.get(searchPlaceUri);
 
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
-      throw Exception(
-          'Error: ${response.statusCode} for a request of a place search');
+      Exception exception = Exception(
+        [
+          'searchPlaces',
+          'Error: ${response.statusCode} for the request of a place search :[${searchPlaceUri.toString()}]',
+        ],
+      );
+      FirebaseCrashlytics.instance.recordFlutterError(FlutterErrorDetails(
+          exception: exception));
+      throw exception;
     }
   }
 
   Future<Map<String, dynamic>> getPlaceDetails(
     String osmId,
   ) async {
-    final response = await http.get(Uri.parse(
+    Uri placeDetailsUri = Uri.parse(
       _osmSearchDetails.replaceFirst('{OSM_ID}', osmId),
-    ));
+    );
+    final response = await http.get(placeDetailsUri);
 
     if (response.statusCode == 200) {
       List places = json.decode(response.body);
@@ -40,9 +51,15 @@ class PlacesService {
         return <String, dynamic>{};
       }
     } else {
-      throw Exception(
-        'Error: ${response.statusCode} for a request of a place details',
+      Exception exception = Exception(
+        [
+          'getPlaceDetails',
+          'Error: ${response.statusCode} for the request of a place details: [${placeDetailsUri.toString()}]',
+        ],
       );
+      FirebaseCrashlytics.instance.recordFlutterError(FlutterErrorDetails(
+          exception: exception));
+      throw exception;
     }
   }
 

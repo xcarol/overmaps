@@ -44,6 +44,8 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: any
+  firebase_crashlytics: ^3.4.19
+  firebase_core: ^2.27.1
 
 dev_dependencies:
   flutter_test:
