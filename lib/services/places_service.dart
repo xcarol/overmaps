@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:overmaps/models/place.dart';
@@ -6,21 +7,35 @@ import 'package:xml/xml.dart';
 import 'package:http/http.dart' as http;
 
 const String _osmSearchPlace =
-    'https://nominatim.openstreetmap.org/search?format=json&q={SEARCH}';
+    'https://nominatim.openstreetmap.org/search?format=json&accept-language={LANG}&q={SEARCH}';
 
 const String _osmSearchDetails =
     'https://nominatim.openstreetmap.org/lookup?format=json&osm_ids={OSM_ID}&polygon_kml=1';
 
 class PlacesService {
+  String acceptedLanguages(String currentLocale) {
+    String languages = '$currentLocale,';
+    List<Locale> locales = AppLocalizations.supportedLocales;
+
+    for (Locale locale in locales) {
+      languages += '${locale.languageCode};q=0.5,';
+    }
+
+    return languages;
+  }
+
   Future<dynamic> searchPlaces(
     String search,
+    String currentLocale,
   ) async {
     if (search.trim().isEmpty) {
       return [];
     }
 
     Uri searchPlaceUri = Uri.parse(
-      _osmSearchPlace.replaceFirst('{SEARCH}', search),
+      _osmSearchPlace
+          .replaceFirst('{LANG}', acceptedLanguages(currentLocale))
+          .replaceFirst('{SEARCH}', search),
     );
     final response = await http.get(searchPlaceUri);
 
@@ -33,8 +48,8 @@ class PlacesService {
           'Error: ${response.statusCode} for the request of a place search :[${searchPlaceUri.toString()}]',
         ],
       );
-      FirebaseCrashlytics.instance.recordFlutterError(FlutterErrorDetails(
-          exception: exception));
+      FirebaseCrashlytics.instance
+          .recordFlutterError(FlutterErrorDetails(exception: exception));
       throw exception;
     }
   }
@@ -61,8 +76,8 @@ class PlacesService {
           'Error: ${response.statusCode} for the request of a place details: [${placeDetailsUri.toString()}]',
         ],
       );
-      FirebaseCrashlytics.instance.recordFlutterError(FlutterErrorDetails(
-          exception: exception));
+      FirebaseCrashlytics.instance
+          .recordFlutterError(FlutterErrorDetails(exception: exception));
       throw exception;
     }
   }
