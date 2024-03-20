@@ -15,6 +15,10 @@ class PlacesService {
   Future<dynamic> searchPlaces(
     String search,
   ) async {
+    if (search.trim().isEmpty) {
+      return [];
+    }
+
     Uri searchPlaceUri = Uri.parse(
       _osmSearchPlace.replaceFirst('{SEARCH}', search),
     );
