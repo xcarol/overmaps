@@ -1,5 +1,7 @@
 # Overmaps
 
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/bebc173017684c0db197fa10ab538c39)](https://app.codacy.com/gh/xcarol/overmaps/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+
 **Explore two locations concurrently with transparent map overlays.**  
 
 Discover a new dimension of exploration with Overmaps, an app that redefines the way you compare and analyse two different locations using Google Maps. With the unique ability to overlay two maps with transparency, Overmaps empowers you to delve into intricate details seamlessly. Here are the key features:  
