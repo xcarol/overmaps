@@ -25,6 +25,9 @@ Future<void> main() async {
     return true;
   };
 
+  // Enable debug logging for Firebase Crashlytics
+  await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(kDebugMode);
+
   runApp(const MyApp());
 }
 
@@ -44,6 +47,7 @@ class _MyAppState extends State {
         ChangeNotifierProvider(create: (_) => StackedMapsModel()),
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: true,
         localizationsDelegates: const [
           AppLocalizations.delegate,
           GlobalMaterialLocalizations.delegate,
