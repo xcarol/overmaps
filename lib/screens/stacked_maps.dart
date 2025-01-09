@@ -12,6 +12,11 @@ import 'package:overmaps/widgets/zoom_slider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+// ignore: constant_identifier_names
+const MAX_POLYGONS = 10000;
+// ignore: constant_identifier_names
+const MIN_COORDINATES = 100;
+
 class StackedMaps extends StatefulWidget {
   const StackedMaps({super.key});
 
@@ -191,9 +196,14 @@ class _StackedMapsState extends State<StackedMaps> {
     List<String> polygons = await placesService.getPlaceBoundaryPolygons(place);
     Set<Polyline> boundaries = {};
 
-    for (String polygon in polygons) {
+    for (int n = 0; n < polygons.length; n++) {
       List<LatLng> polylinePoints = List.empty(growable: true);
-      List<String> coordinates = polygon.split(' ');
+      List<String> coordinates = polygons[n].split(' ');
+
+      // Simplify the polygon if it has too many points
+      if (polygons.length > MAX_POLYGONS && coordinates.length < MIN_COORDINATES) {
+        continue;
+      }
 
       for (String coordinatePair in coordinates) {
         List<String> latLng = coordinatePair.split(',');
@@ -205,7 +215,7 @@ class _StackedMapsState extends State<StackedMaps> {
 
       if (polylinePoints.isNotEmpty) {
         boundaries.add(Polyline(
-            polylineId: PolylineId(DateTime.now().toString()),
+            polylineId: PolylineId('${polylineId.value}-$n'),
             points: polylinePoints,
             width: 2,
             color: boundaryColor));
