@@ -101,11 +101,11 @@ class _HomeState extends State<Home> {
         .frontPlaceBoundaryColor = boundaryColor;
   }
 
-  searchPlaceScreen(Function selectedPlace) {
+  searchPlaceScreen(String currentPlace, Function selectedPlace) {
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => SearchPlace(selectedPlace: selectedPlace)),
+          builder: (context) => SearchPlace(currentPlace: currentPlace, selectedPlace: selectedPlace)),
     );
   }
 
@@ -122,7 +122,7 @@ class _HomeState extends State<Home> {
   }
 
   searchLeftPlace() {
-    searchPlaceScreen((Place place) {
+    searchPlaceScreen(_leftName, (Place place) {
       setState(() {
         if (isLeftPlaceInFront) {
           setFrontPlace(place, _leftBoundaryColor);
@@ -136,7 +136,7 @@ class _HomeState extends State<Home> {
   }
 
   searchRightPlace() {
-    searchPlaceScreen((Place place) {
+    searchPlaceScreen(_rightName, (Place place) {
       setState(() {
         if (isRightPlaceInFront) {
           setFrontPlace(place, _rightBoundaryColor);
