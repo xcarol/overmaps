@@ -200,7 +200,11 @@ class _StackedMapsState extends State<StackedMaps> {
       List<LatLng> polylinePoints = List.empty(growable: true);
       List<String> coordinates = polygons[n].split(' ');
 
-      // Simplify the polygon if it has too many points
+      // Problem: When the map boundary has lot of polygons an out of memory crash occurs.
+      // Solution: Omit small polygons when the map boundary has too many polygons.
+      //
+      // Note: Open Street Map Lookup API call has a 'polygon_threshold' parameter to simplify 
+      // the returned polygons but this is not enough when the location has too many polygons.
       if (polygons.length > MAX_POLYGONS && coordinates.length < MIN_COORDINATES) {
         continue;
       }
