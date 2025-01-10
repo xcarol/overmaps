@@ -134,4 +134,4 @@ The keystore (and password) used for the app signing is at the Bitwarden vault. 
 
 - Build the bundle (as explained above): `flutter build appbundle --release --dart-define=MAPS_API_KEY=key`
 
-- Go to: [Create an internal test version](https://play.google.com/console/u/0/developers/5602401961225582177/app/4974106073607129188/tracks/4701415689677472096/releases/7/prepare) to upload it.
+- Go to: [Create an internal test version](https://play.google.com/console/u/0/developers/5602401961225582177/app/4974805149532825109/app-dashboard) to upload it.
