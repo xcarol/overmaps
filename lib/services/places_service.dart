@@ -28,7 +28,7 @@ class PlacesService {
     String search,
     String currentLocale,
   ) async {
-    if (search.trim().isEmpty) {
+    if (search.trim().isEmpty || search.trim().length < 3) {
       return [];
     }
 
