@@ -118,7 +118,7 @@ Setup these files:
 
 ## Application signing and publishing
 
-As this is a one time process, I cannot step back to do the process again, so here it is useful information in case it is needed do this process again. God willing 🤞😅.  
+As this is a one time process, I cannot step back to do the process again, so here I leave useful information in case it is needed do this process again. God willing 🤞😅.  
 
 Links to follow:  
 
