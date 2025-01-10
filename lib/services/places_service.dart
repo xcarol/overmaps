@@ -7,7 +7,7 @@ import 'package:xml/xml.dart';
 import 'package:http/http.dart' as http;
 
 const String _osmSearchPlace =
-    'https://nominatim.openstreetmap.org/search?format=json&accept-language={LANG}&q={SEARCH}';
+    'https://nominatim.openstreetmap.org/search?format=json&accept-language={LANG}&q={SEARCH}&limit=10';
 
 const String _osmSearchDetails =
     'https://nominatim.openstreetmap.org/lookup?format=json&osm_ids={OSM_ID}&polygon_kml=1';
