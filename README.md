@@ -32,7 +32,7 @@ Overmaps provides a fresh and innovative way to gain insights into two locations
 Set _MAPS_API_KEY_ environment variable at _./android/secrets.properties_  for the android app  
 Set _--dart-define=MAPS_API_KEY=key_ when running _flutter_
 
-## Crashlytics
+## Firebase & Crashlytics
 
 Got configuration steps from _https://firebase.google.com/docs/crashlytics/get-started?platform=flutter_  
 
