@@ -36,20 +36,30 @@ Set _--dart-define=MAPS_API_KEY=key_ when running _flutter_
 
 Got configuration steps from _https://firebase.google.com/docs/crashlytics/get-started?platform=flutter_  
 
-First login to Firebase  
+Install Flutter Fire
+
+    dart pub global activate flutterfire_cli
+
+Add its path to _.zshrc_
+
+    export PATH=$PATH":"$HOME/.pub-cache/bin
+
+Login to Firebase  
 
     firebase login
 
-Then run
+Configure project  
 
     flutterfire configure
 
-and select  
+Select  
 
-✔ Select a Firebase project to configure your Flutter application with · overmap-1503847389383 (Overmaps)  
-✔ Which platforms should your configuration support (use arrow keys & space to select)? · android, web  
+✔ Select a Firebase project to configure your Flutter application with  
+· overmap-1503847389383 (Overmaps)  
+✔ Which platforms should your configuration support (use arrow keys & space to select)?  
+· android  
 
-to generate the files  
+This process will generate the files:  
 
     google-services.json
     firebase_options.dart
@@ -81,22 +91,14 @@ After updating the logo run:  $ `dart run flutter_launcher_icons`
 
 ## Build and run Android App
 
-Setup these files:  
+Setup these files in the path _./android_:  
 
 - _key.properties_
 
-    storePassword=(Stored in BitWarden)  
-    keyPassword=(Stored in BitWarden)  
+    storePassword=(Stored in BitWarden with the name _Android signing_)  
+    keyPassword=(Stored in BitWarden with the name _Android signing_)  
     keyAlias=upload  
-    storeFile=/home/xcarol/workspace/overmaps/upload-keystore.jks (Stored in BitWarden)  
-
-- _local.properties_
-
-    sdk.dir=/home/xcarol/workspace/android-sdk/  
-    flutter.sdk=/home/xcarol/snap/flutter/common/flutter  
-    flutter.buildMode=release  
-    flutter.versionName=1.0.0  
-    flutter.versionCode=1  
+    storeFile=/home/xcarol/workspace/overmaps/upload-keystore.jks (Stored in BitWarden with the name _Android signing_)  
 
 - _secrets.properties_
 
@@ -109,10 +111,6 @@ Setup these files:
 #### Bundle
 
 `flutter build appbundle --release --dart-define=MAPS_API_KEY=key`
-
-#### Web
-
-`flutter build web --release --dart-define=MAPS_API_KEY=key`
 
 - MAPS_API_KEY "key" is the same used in the _secrets.properties_.  
 
