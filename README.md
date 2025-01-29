@@ -36,6 +36,9 @@ Set _--dart-define=MAPS_API_KEY=key_ when running _flutter_
 
 Got configuration steps from _https://firebase.google.com/docs/crashlytics/get-started?platform=flutter_  
 
+Project configuration at Firebase [Overmaps](https://console.firebase.google.com/project/overmap-1503847389383/overview)
+
+
 Install Flutter Fire
 
     dart pub global activate flutterfire_cli
@@ -80,6 +83,12 @@ Set in _.vscode/launch.json_
       ]
 
 - MAPS_API_KEY "key" is the same used in the _secrets.properties_.  
+
+## Internationalization
+
+Followed this guide: [i18n|Flutter](https://docs.flutter.dev/ui/accessibility-and-internationalization/internationalization)  
+
+Run `flutter gen-l10n` to update the i18n generated files.  
 
 ## Icons
 
