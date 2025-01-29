@@ -32,24 +32,37 @@ Overmaps provides a fresh and innovative way to gain insights into two locations
 Set _MAPS_API_KEY_ environment variable at _./android/secrets.properties_  for the android app  
 Set _--dart-define=MAPS_API_KEY=key_ when running _flutter_
 
-## Crashlytics
+## Firebase & Crashlytics
 
 Got configuration steps from _https://firebase.google.com/docs/crashlytics/get-started?platform=flutter_  
 
-First login to Firebase  
+Project configuration at Firebase [Overmaps](https://console.firebase.google.com/project/overmap-1503847389383/overview)
+
+
+Install Flutter Fire
+
+    dart pub global activate flutterfire_cli
+
+Add its path to _.zshrc_
+
+    export PATH=$PATH":"$HOME/.pub-cache/bin
+
+Login to Firebase  
 
     firebase login
 
-Then run
+Configure project  
 
     flutterfire configure
 
-and select  
+Select  
 
-✔ Select a Firebase project to configure your Flutter application with · overmap-1503847389383 (Overmaps)  
-✔ Which platforms should your configuration support (use arrow keys & space to select)? · android, web  
+✔ Select a Firebase project to configure your Flutter application with  
+· overmap-1503847389383 (Overmaps)  
+✔ Which platforms should your configuration support (use arrow keys & space to select)?  
+· android  
 
-to generate the files  
+This process will generate the files:  
 
     google-services.json
     firebase_options.dart
@@ -71,32 +84,30 @@ Set in _.vscode/launch.json_
 
 - MAPS_API_KEY "key" is the same used in the _secrets.properties_.  
 
+## Internationalization
+
+Followed this guide: [i18n|Flutter](https://docs.flutter.dev/ui/accessibility-and-internationalization/internationalization)  
+
+Run `flutter gen-l10n` to update the i18n generated files.  
+
 ## Icons
 
 The [flutter_launcher_icons](https://pub.dev/packages/flutter_launcher_icons) tool is used to generate the icons for different platforms  
 
-The file used as the app logo is _./lib/assets/logo.png_  defined in the _pubspec.yaml_ file under the _flutter_launcher_icons_ section.  
+The file used as the app logo is _./lib/assets/logo-icon.png_  defined in the _pubspec.yaml_ file under the _flutter_launcher_icons_ section.  
 
 After updating the logo run:  $ `dart run flutter_launcher_icons`
 
 ## Build and run Android App
 
-Setup these files:  
+Setup these files in the path _./android_:  
 
 - _key.properties_
 
-    storePassword=(Stored in BitWarden)  
-    keyPassword=(Stored in BitWarden)  
+    storePassword=(Stored in BitWarden with the name _Android signing_)  
+    keyPassword=(Stored in BitWarden with the name _Android signing_)  
     keyAlias=upload  
-    storeFile=/home/xcarol/workspace/overmaps/upload-keystore.jks (Stored in BitWarden)  
-
-- _local.properties_
-
-    sdk.dir=/home/xcarol/workspace/android-sdk/  
-    flutter.sdk=/home/xcarol/snap/flutter/common/flutter  
-    flutter.buildMode=release  
-    flutter.versionName=1.0.0  
-    flutter.versionCode=1  
+    storeFile=/home/xcarol/workspace/overmaps/upload-keystore.jks (Stored in BitWarden with the name _Android signing_)  
 
 - _secrets.properties_
 
@@ -109,10 +120,6 @@ Setup these files:
 #### Bundle
 
 `flutter build appbundle --release --dart-define=MAPS_API_KEY=key`
-
-#### Web
-
-`flutter build web --release --dart-define=MAPS_API_KEY=key`
 
 - MAPS_API_KEY "key" is the same used in the _secrets.properties_.  
 

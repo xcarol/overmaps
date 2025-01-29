@@ -1,6 +1,7 @@
 # Overmaps related
 /android/app/google-services.json
 /lib/firebase_options.dart
+firebase.json
 
 # Miscellaneous
 *.class
